@@ -1,0 +1,329 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@media only screen and (max-width: 600px){
+
+  .mainBox{
+    margin-left: 6%;
+    margin-right: 6%;
+  }
+}
+
+@media only screen and (max-width: 950px){
+  #BlackLogo{
+    display: none;
+  }
+
+  #RedLogo{
+    width: 40%;
+  }
+
+  .bar_width{
+    width: 290px;
+  }
+}
+
+@media only screen and (min-width: 768px){
+  .mainBox{
+    margin-left: 5.5%;
+    margin-right: 5.5%;
+  }
+
+  .bar_width{
+    width: 460px;
+  } 
+}
+
+@media only screen and (min-width: 900px){
+  .mainBox{
+    margin-left: 3%;
+    margin-right: 3%;
+  }
+
+}
+
+
+.default_font{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000000;
+}
+
+.note{
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  color: #BDBDBD;
+}
+
+.body{
+  padding: 2%;
+  margin: 3%;
+  left: 201px;
+  top: 163px;
+}
+
+.large_input{
+  width: 100%;
+  height: 46px;
+  font-weight: 600px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 78px;
+  border: none;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.newArrow{
+  background-color: white;
+  background-image: url('./Images/dropArrow.png');
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center;
+  background-size: 10px;
+}
+
+.large_div{
+  width: 100%;
+  height: 46px;
+  border-radius: 78px;
+  border: none;
+}
+
+.large_input_transparent{
+  width: 100%;
+  height: 46px;
+  font-weight: 600px;
+  background: transparent;
+  border-radius: 78px;
+  border: none;
+  text-align: left;
+  padding-left: 10px;
+  text-shadow: 0px 0px 0px black;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.large_input:focus{
+  box-shadow: 0px 0px 15px lightblue;
+}
+
+.small_div{
+  /* width: 403px; */
+  width: 92%;
+  height: 46px;
+  border-radius: 78px;
+  border: none;
+}
+
+.small_input_transparent{
+  width: 100%;
+  height: 46px;
+  font-weight: 600px;
+  background: transparent;
+  text-shadow: 0px 0px 0px black;
+  border-radius: 78px;
+  border: none;
+  text-align: left;
+  padding-left: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.small_input{
+  width: 92%;
+  height: 46px;
+  font-weight: 600px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 78px;
+  border: none;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.small_input:focus{
+  box-shadow: 0px 0px 15px lightblue;
+}
+
+.submit_bar{
+  /* width: 403px; */
+  width: 35%;
+  height: 46px;
+  left: 527px;
+  top: 807px;
+  background: #000000;
+  border-radius: 78px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 19px;
+  border: none;
+}
+
+
+
+.submit_bar_success{
+  height: 48px;
+  background: #31C440;
+  box-shadow: 0px 4px 19px rgba(0, 0, 0, 0.2);
+  border-radius: 100px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 140%;
+  border: none;
+}
+
+.submit_bar_error{
+  height: 48px;
+  background: #EB5757;
+  box-shadow: 0px 4px 19px rgba(0, 0, 0, 0.2);
+  border-radius: 100px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 140%;
+  border: none;
+}
+
+
+.inputBox{
+  /* margin-top: 48px;
+  margin-bottom: 60px; */
+  margin-top: 11%;
+  margin-bottom: 14%;
+  width: 80%;
+  font-weight: 500;
+}
+
+.sep_bottom{
+  margin-bottom: 4.8%;
+}
+
+
+
+/* .mainBox{
+  margin-left: 14.5%;
+  margin-right: 14.5%;
+} */
+
+.subBox{
+  /* width: 486px; */
+  width: 90%;
+  height: 227px;
+  left: 200px;
+  top: 545px;
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+.subContent{
+  padding-top: 41px;
+  padding-left: 29px;
+}
+
+.blurBox{
+  background: rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(15px);
+  border-radius: 30px
+}
+
+.roundBorder{
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+.image{
+  /* width: 258px;
+  height: 260px; */
+  width: 76%;
+  padding-top: 76%;
+  margin-top: 5%;
+  background-repeat: no-repeat;
+  background: url('./Images/image.png');
+  background-size: cover;
+  border-radius: 8.3%;
+}
+
+.verified{
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12.7972px;
+  line-height: 25px;
+  text-decoration-line: underline;
+  color: #219653;
+}
+
+.navText{
+  color: white;
+}
+
+.center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: none;
+}
+
+.left{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  text-align: left;
+  border: none;
+}
+
+.right{
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  text-align: right;
+  border: none;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

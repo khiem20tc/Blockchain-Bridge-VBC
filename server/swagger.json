@@ -1,0 +1,12 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Sample API"
+    },
+    "servers": {
+        "url": "http://192.168.123.47:3000/api"
+    },
+    "paths": {
+        
+    }
+}

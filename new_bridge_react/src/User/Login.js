@@ -72,7 +72,7 @@ class Login extends React.Component{
 
 
   render(){
-  if (this.state.login == true){
+  if (this.state.login == true || window.ethereum !== undefined){
     console.log("Redirect")
     return(
       <Redirect to={{ pathname: '/' }} />

@@ -28,6 +28,7 @@ function Routes() {
             <Route path= '/register'>
                 <Register setLog={setLog}/>
             </Route>
+            <Redirect to="/" />
         </Switch>
     </Router>)
 }

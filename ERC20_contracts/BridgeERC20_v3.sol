@@ -47,11 +47,13 @@ contract BridgeERC20 {
         admins[acc] = allow;
     }
 
-    //Check signature
-    function check_signature(bytes32 messageHash, bytes memory signature) internal view returns(bool){
-        address signer = ECDSA.recover(messageHash, signature);
+    //Verify signature
+    function check_signature(bytes32 messageHash, bytes memory signature) public view returns(bool){
+        bytes32 EthHash = ECDSA.toEthSignedMessageHash(messageHash);
+        address signer = ECDSA.recover(EthHash, signature);
         return(admins[signer] || super_admins[signer]);
     }
+
 
 
     //Receiver
@@ -66,7 +68,7 @@ contract BridgeERC20 {
     function transfer_native(address from, uint256 amount, bytes memory signature) public payable {
         require(amount <= address(this).balance);
         uint256 nonce = Nonces[from][msg.sender][true][false];
-        bytes32 messageHash = keccak256(abi.encodePacked("transfer_native", from, amount, nonce));
+        bytes32 messageHash = keccak256(abi.encodePacked("transfer_native", from, msg.sender, amount, nonce));
         bool check = check_signature(messageHash, signature);
         require(check == true, "Fail to verify");
 

@@ -56,7 +56,8 @@ contract BridgeERC721_v2 is ERC165, IERC721Receiver {
 
     //Verify signature
     function check_signature(bytes32 messageHash, bytes memory signature) internal view returns(bool){
-        address signer = ECDSA.recover(messageHash, signature);
+        bytes32 EthHash = ECDSA.toEthSignedMessageHash(messageHash);
+        address signer = ECDSA.recover(EthHash, signature);
         return(admins[signer] || super_admins[signer]);
     }
     
@@ -79,7 +80,7 @@ contract BridgeERC721_v2 is ERC165, IERC721Receiver {
             uint256 tokenId = tokenIds[i];
             string memory _tokenURI = tokenURIs[i];
 
-            bytes32 messageHash = keccak256(abi.encodePacked("unlock_multiples", from, tokenId, TxHash));
+            bytes32 messageHash = keccak256(abi.encodePacked("unlock_multiples", from, msg.sender, tokenId, TxHash));
             bool check = check_signature(messageHash, signatures[i]);
             require(check == true, "Fail to verify");
 

@@ -22,8 +22,8 @@ contract BridgeERC20 {
     //From_address => To_address => isNative => isLock => Uint256
     mapping (address => mapping(address => mapping(bool => mapping(bool => uint256)))) public Nonces;
     
-    
     event TransactToken(address indexed from, address indexed to, uint256 indexed amount, bool is_native, bool is_lock);
+
 
     constructor(address[] memory _super_admins) payable {
         for (uint i=0; i < _super_admins.length; i++){
@@ -54,8 +54,14 @@ contract BridgeERC20 {
         return(admins[signer] || super_admins[signer]);
     }
 
+    //Automatic receive - To transfer from 1 acc to the same acc - Web3 doesn't support subscription, code backend later
+    receive() external payable {
+        require(msg.value > 0);
+        Nonces[msg.sender][msg.sender][true][true] += 1;
+        emit TransactToken(msg.sender, msg.sender, msg.value, true, true);
+    }
 
-
+    
     //Receiver
     function receive_native(address to) public payable {
         require(msg.value > 0, "Transfer zero");
@@ -75,7 +81,7 @@ contract BridgeERC20 {
         (bool sent, ) = (msg.sender).call{value: amount}("");
         require(sent == true, "Fail to transfer");
         Nonces[from][msg.sender][true][false] += 1;
-        emit TransactToken(from, msg.sender, amount, false, false);
+        emit TransactToken(from, msg.sender, amount, true, false);
     }
 
 

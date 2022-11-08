@@ -24,7 +24,7 @@ contract BridgeERC721_v3 is ERC165, IERC721Receiver {
     mapping (address => bool) public admins;
     mapping (address => bool) public super_admins;
     //From => to => isLock => Nonce
-    mapping (address => mapping(address => mapping(bool => uint256))) Nonces;
+    mapping (address => mapping(address => mapping(bool => uint256))) public Nonces;
 
     event TransactMultiTokens(address indexed from, address indexed to, uint256[] tokenIds, bool is_lock);
 

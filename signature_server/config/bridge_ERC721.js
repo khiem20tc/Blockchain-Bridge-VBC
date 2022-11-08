@@ -5,6 +5,29 @@ const BridgeAbiERC721 = [
 	{
 		"inputs": [
 			{
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "address",
+				"name": "from_contract_add",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			}
+		],
+		"name": "lock_multiples",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address[]",
 				"name": "_super_admins",
 				"type": "address[]"
@@ -48,6 +71,39 @@ const BridgeAbiERC721 = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "tokenIds",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "string[]",
+				"name": "tokenURIs",
+				"type": "string[]"
+			},
+			{
+				"internalType": "address",
+				"name": "to_contract_add",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "signatures",
+				"type": "bytes[]"
+			}
+		],
+		"name": "unlock_multiples",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
@@ -67,41 +123,29 @@ const BridgeAbiERC721 = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "acc",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "",
 				"type": "address"
 			},
 			{
 				"internalType": "bool",
-				"name": "allow",
+				"name": "",
 				"type": "bool"
 			}
 		],
-		"name": "change_admins",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+		"name": "Nonces",
+		"outputs": [
 			{
-				"internalType": "uint256[]",
-				"name": "tokenIds",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "address",
-				"name": "from_contract_add",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
-		"name": "lock_multiples",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -141,24 +185,6 @@ const BridgeAbiERC721 = [
 	{
 		"inputs": [
 			{
-				"internalType": "address[]",
-				"name": "tos",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[][]",
-				"name": "token_ids",
-				"type": "uint256[][]"
-			}
-		],
-		"name": "set_multiple_approvals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -192,34 +218,6 @@ const BridgeAbiERC721 = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "tokenIds",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "string[]",
-				"name": "tokenURIs",
-				"type": "string[]"
-			},
-			{
-				"internalType": "address",
-				"name": "to_contract_add",
-				"type": "address"
-			}
-		],
-		"name": "unlock_multiples",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ];

@@ -99,7 +99,7 @@ contract BridgeERC20 {
     function unlock(address from, address to_contract_add, uint256 amount, bytes memory signature) public {
         address to = msg.sender;
         uint256 nonce = Nonces[from][to][false][false];
-        bytes32 messageHash = keccak256(abi.encodePacked("unlock", from, to_contract_add, amount, nonce));
+        bytes32 messageHash = keccak256(abi.encodePacked("unlock", from, to, amount, nonce));
         bool check = check_signature(messageHash, signature);
         require(check == true, "Fail to verify");
         

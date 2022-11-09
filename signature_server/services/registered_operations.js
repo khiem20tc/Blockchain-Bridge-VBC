@@ -4,16 +4,15 @@ const Web3 =  require('web3');
 const crypto = require('crypto-js');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const NonceSubprovider = require('web3-provider-engine/subproviders/nonce-tracker');
+
+const {ERC20_signer, ERC721_multiple_signer} = require('./admin_sign');
+const {verify_FT_request, verify_NFT_request} = require('./verify');
+
 const index = require('../config/index');
 const {getOne, create} = require('../repositories/index');
 const {accounts, requests} =  require('../model/index');
 const {FtRequests, NftRequests} = requests
 
-//Further UPDATE:
-//Tách phần connect vào network ra ngoài function bằng Web3.HTTPProvider + web3.eth.Contract
-//Vào trong function, gọi methods qua contract_instance.methods
-//Ký transaction qua web3.eth.accounts.signTransaction(tx, private key)
-//Send signed transaction by web3.eth.sendSignedTransaction
 
 
 async function checkBridge(bridge_name, private_key, token){
@@ -23,6 +22,7 @@ async function checkBridge(bridge_name, private_key, token){
     let bridge_add;
     let user_contract;
     let other_user_contract;
+    let signer;
     
     if (bridge_name === "MBC"){
         network = process.env.MBC_LINK;
@@ -50,16 +50,18 @@ async function checkBridge(bridge_name, private_key, token){
         bridge_contract = await new web3.eth.Contract(index.BridgeERC20Info.BridgeAbiERC20, bridge_add);
         user_contract = await new web3.eth.Contract(index.ERC20Info.AbiERC20, index.ERC20Info.AddressERC20);
         other_user_contract = await new other_web3.eth.Contract(index.ERC20Info.AbiERC20, index.ERC20Info.AddressERC20);
+        signer = ERC20_signer;
     } else {
         bridge_add = index.BridgeERC721Info.BridgeAddressERC721;
         bridge_contract = await new web3.eth.Contract(index.BridgeERC721Info.BridgeAbiERC721, bridge_add);
         user_contract = await new web3.eth.Contract(index.ERC721Info.AbiERC721, index.ERC721Info.AddressERC721);
         other_user_contract = await new other_web3.eth.Contract(index.ERC721Info.AbiERC721, index.ERC721Info.AddressERC721);
+        signer = ERC721_multiple_signer;
     }
     
     const Acc = await web3.eth.getAccounts();
     const other_Acc = await web3.eth.getAccounts();
-    return ({Acc, other_Acc, bridge_contract, bridge_add, user_contract, other_user_contract, web3, user_provider, other_provider})
+    return ({Acc, other_Acc, bridge_contract, bridge_add, user_contract, other_user_contract, web3, user_provider, other_provider, signer})
 }
 
 //ERC20
@@ -105,7 +107,7 @@ const approveFunc = async(web3, user_contract, sender_add, bridge_add, token, am
     }
 }
 
-const registeredFunc = async(funcName, params, bridge_name, username, token, value = 0) => {
+const registeredFunc = async(funcName, is_unlock, params, bridge_name, username, token, value = 0) => {
     const private_key = (crypto.AES.decrypt((await getOne(accounts, {username})).privateKey, process.env.SYS_SECRET_KEY)).toString(crypto.enc.Utf8);
 
     console.log(private_key);
@@ -123,44 +125,97 @@ const registeredFunc = async(funcName, params, bridge_name, username, token, val
         console.log(params)
     } 
     console.log(Acc);
+
+    if (is_unlock){
+        let valid;
+        let signature;
+        if (token == "NFT"){
+            valid = await verify_NFT_request({
+                from: params[0],
+                to: Acc[0],
+                to_network: bridge_name,
+                tokenIds: params[1]
+            });
+            if (valid == false){
+                throw new Error("INVALID ERC721");
+            } else {
+                signature = await ERC721_multiple_signer({
+                    to_network: bridge_name,
+                    from: params[0],
+                    to: Acc[0],
+                    tokenIds: params[1]
+                })
+            } 
+        } else {
+            let is_native = true;
+            if (funcName == "unlock"){
+                is_native = false;
+            }
+            valid = await verify_FT_request({
+                from: params[0],
+                to: Acc[0],
+                is_native,
+                to_network: bridge_name,
+                amount: params[-1]
+            });
+            if (valid == false){
+                throw new Error("INVALID ERC20");
+            } else {
+                signature = await ERC20_signer({
+                    to_network: bridge_name,
+                    from: params[0],
+                    to: Acc[0],
+                    is_native,
+                    amount: params[-1]
+                })
+            } 
+        }
+
+        params.push(signature);
+    }
     
     const receipt = await bridge_contract.methods[funcName](
         ...params
     ).send({from: Acc[0], value: value, gas: '8000000'});
     
-    const {events} = receipt;
-    if (token == "FT"){
-        const {returnValues} = events.TransactToken
-        if (returnValues.is_lock){
-            const {from, to, amount, is_native} = returnValues;
-            await create(FtRequests, {
-                from,
-                to,
-                amount,
-                is_native,
-                from_network: bridge_name,
-                isDeleted: 0,
-                TxId: events.TransactToken.transactionHash
-            })
-        }
-    } else {
-        const {returnValues} = events.TransactMultiTokens
-        if (returnValues.is_lock){
-            const {from, to, tokenIds} = returnValues;
-            await create(NftRequests, {
-                from,
-                to,
-                tokenIds,
-                from_network: bridge_name,
-                isDeleted: 0,
-                TxId: events.TransactMultiTokens.transactionHash
-            })
-        }
-    }
-    console.log("Before", web3.eth.currentProvider);
+    
+
+    //From auto-admin flow
+
+    // const {events} = receipt;
+    // if (token == "FT"){
+    //     const {returnValues} = events.TransactToken
+    //     if (returnValues.is_lock){
+    //         const {from, to, amount, is_native} = returnValues;
+    //         await create(FtRequests, {
+    //             from,
+    //             to,
+    //             amount,
+    //             is_native,
+    //             from_network: bridge_name,
+    //             isDeleted: 0,
+    //             TxId: events.TransactToken.transactionHash
+    //         })
+    //     }
+    // } else {
+    //     const {returnValues} = events.TransactMultiTokens
+    //     if (returnValues.is_lock){
+    //         const {from, to, tokenIds} = returnValues;
+    //         await create(NftRequests, {
+    //             from,
+    //             to,
+    //             tokenIds,
+    //             from_network: bridge_name,
+    //             isDeleted: 0,
+    //             TxId: events.TransactMultiTokens.transactionHash
+    //         })
+    //     }
+    // }
+    // console.log("Before", web3.eth.currentProvider);
+
     await user_provider.engine.stop();
     await other_provider.engine.stop();
-    console.log(web3.eth.currentProvider);
+    // console.log(web3.eth.currentProvider);
     return(receipt)
 }
 

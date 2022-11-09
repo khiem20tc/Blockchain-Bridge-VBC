@@ -12,24 +12,24 @@ const {AddressERC20} = require('../config/index').ERC20Info;
 // Then, increaseAllowance(Bridge_Contract_add, addedValue)
 
 const lock = async({username, bridge_name, amount, to}) => {
-    return(await registeredFunc("lock", [AddressERC20, amount, to], bridge_name, username, "FT"));
+    return(await registeredFunc("lock", false, [AddressERC20, amount, to], bridge_name, username, "FT"));
 }
 
 const receive_native = async({username, bridge_name, amount, to}) => {
-    return (await registeredFunc("receive_native", [to], bridge_name, username, "FT", amount));
+    return (await registeredFunc("receive_native", false, [to], bridge_name, username, "FT", amount));
 }
 
 const unlock = async({username, bridge_name, from, amount}) => {
-    return (await registeredFunc("unlock", [from, AddressERC20, amount], bridge_name, username, "FT"));
+    return (await registeredFunc("unlock", true, [from, AddressERC20, amount], bridge_name, username, "FT"));
 }
 
 const transfer_native = async({username, bridge_name, from, amount}) => {
-    return (await registeredFunc("transfer_native", [from, amount], bridge_name, username, "FT"));
+    return (await registeredFunc("transfer_native", true, [from, amount], bridge_name, username, "FT"));
     
 }
 
 const getBalance = async({username, bridge_name, account}) => {
-    return(await registeredFunc("balanceOf", [account], bridge_name, username, "FT"));
+    return(await registeredFunc("balanceOf", false, [account], bridge_name, username, "FT"));
 }
 
 module.exports = {

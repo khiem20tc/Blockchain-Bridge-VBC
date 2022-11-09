@@ -1,127 +1,129 @@
-const mongoose = require('mongoose');
+//DB APPROACH: REMOVE DUE TO ERC721 ERROR. COULD ADD A COUNT OF TOKENS (LIKE ERC20 AMOUNTS FIELDS) TO FIX.
+
+// const mongoose = require('mongoose');
 
 
-const NewFtRequestsSchema = mongoose.Schema({
-    from: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
-    to: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
-    deposit_amounts: [{
-        type: String,
-        min: 1,
-        match: /^(([0-9]+)|(Null))$/i
-    }],
-    deposit_from_networks: [{
-        type: String,
-        match: /^(MBC|AGD|Null)$/i
-    }],
-    deposit_TxIds: [{
-        type: String,
-        lowercase: true,
-    }],
-    deposit_is_native: [{
-        type: Boolean,
-    }],
-    withdraw_amounts: [{
-        type: String,
-        min: 1,
-        match: /^(([0-9]+)|(Null))$/i
-    }],
-    withdraw_from_networks: [{
-        type: String,
-        match: /^(MBC|AGD|Null)$/i
-    }],
-    withdraw_TxIds: [{
-        type: String,
-        lowercase: true,
-    }],
-    withdraw_is_native: [{
-        type: Boolean,
-    }]
-})
+// const NewFtRequestsSchema = mongoose.Schema({
+//     from: {
+//         type: String,
+//         required: true,
+//         lowercase: true
+//     },
+//     to: {
+//         type: String,
+//         required: true,
+//         lowercase: true
+//     },
+//     deposit_amounts: [{
+//         type: String,
+//         min: 1,
+//         match: /^(([0-9]+)|(Null))$/i
+//     }],
+//     deposit_from_networks: [{
+//         type: String,
+//         match: /^(MBC|AGD|Null)$/i
+//     }],
+//     deposit_TxIds: [{
+//         type: String,
+//         lowercase: true,
+//     }],
+//     deposit_is_native: [{
+//         type: Boolean,
+//     }],
+//     withdraw_amounts: [{
+//         type: String,
+//         min: 1,
+//         match: /^(([0-9]+)|(Null))$/i
+//     }],
+//     withdraw_from_networks: [{
+//         type: String,
+//         match: /^(MBC|AGD|Null)$/i
+//     }],
+//     withdraw_TxIds: [{
+//         type: String,
+//         lowercase: true,
+//     }],
+//     withdraw_is_native: [{
+//         type: Boolean,
+//     }]
+// })
 
-const NewNftRequestsSchema = mongoose.Schema({
-    from: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
-    to: {
-        type: String,
-        required: true,
-        lowercase: true
-    },
-    deposit_from_networks: [{
-        type: String,
-        match: /^(MBC|AGD|Null)$/i
-    }],
-    deposit_TxIds: [{
-        type: String,
-        lowercase: true,
-    }],
-    deposit_tokenIds: [{
-        type: String, 
-        min: 1,
-        match: /^(([0-9]+)|(Null))$/i}],
+// const NewNftRequestsSchema = mongoose.Schema({
+//     from: {
+//         type: String,
+//         required: true,
+//         lowercase: true
+//     },
+//     to: {
+//         type: String,
+//         required: true,
+//         lowercase: true
+//     },
+//     deposit_from_networks: [{
+//         type: String,
+//         match: /^(MBC|AGD|Null)$/i
+//     }],
+//     deposit_TxIds: [{
+//         type: String,
+//         lowercase: true,
+//     }],
+//     deposit_tokenIds: [{
+//         type: String, 
+//         min: 1,
+//         match: /^(([0-9]+)|(Null))$/i}],
 
-    withdraw_from_networks: [{
-        type: String,
-        match: /^(MBC|AGD|Null)$/i
-    }],
-    withdraw_TxIds: [{
-        type: String,
-        lowercase: true,
-    }],
-    withdraw_tokenIds: [{
-        type: String,
-        min: 1,
-        match: /^(([0-9]+)|(Null))$/i
-    }]
-})
+//     withdraw_from_networks: [{
+//         type: String,
+//         match: /^(MBC|AGD|Null)$/i
+//     }],
+//     withdraw_TxIds: [{
+//         type: String,
+//         lowercase: true,
+//     }],
+//     withdraw_tokenIds: [{
+//         type: String,
+//         min: 1,
+//         match: /^(([0-9]+)|(Null))$/i
+//     }]
+// })
 
-const trim = function(string){
-    if(string.slice(0,2) !== "0x"){
-        let new_str = "0x" + string
-        return new_str
-    }
-    return string
-}
+// const trim = function(string){
+//     if(string.slice(0,2) !== "0x"){
+//         let new_str = "0x" + string
+//         return new_str
+//     }
+//     return string
+// }
 
-const trim_arr = function(arr){
-    for (let i = 0; i < arr.length; i++){
-        arr[i] = trim(arr[i])
-    }
-    return(arr)
-}
+// const trim_arr = function(arr){
+//     for (let i = 0; i < arr.length; i++){
+//         arr[i] = trim(arr[i])
+//     }
+//     return(arr)
+// }
 
-const trim_TxIds = function(next){
-    if (this.isModified('deposit_TxIds')){
-        this.deposit_TxIds = trim_arr(this.deposit_TxIds)
-    }
-    if (this.isModified('withdraw_TxIds')){
-        this.withdraw_TxIds = trim_arr(this.withdraw_TxIds)
-    }
-    next();
-}
-
-
-NewFtRequestsSchema.pre('save', trim_TxIds);
-NewNftRequestsSchema.pre('save', trim_TxIds);
+// const trim_TxIds = function(next){
+//     if (this.isModified('deposit_TxIds')){
+//         this.deposit_TxIds = trim_arr(this.deposit_TxIds)
+//     }
+//     if (this.isModified('withdraw_TxIds')){
+//         this.withdraw_TxIds = trim_arr(this.withdraw_TxIds)
+//     }
+//     next();
+// }
 
 
-const NewFtRequests = mongoose.model('NewFtRequests', NewFtRequestsSchema);
-const NewNftRequests = mongoose.model('NewNftRequests', NewNftRequestsSchema);
+// NewFtRequestsSchema.pre('save', trim_TxIds);
+// NewNftRequestsSchema.pre('save', trim_TxIds);
 
-module.exports = {
-    NewFtRequests,
-    NewNftRequests
-}
+
+// const NewFtRequests = mongoose.model('NewFtRequests', NewFtRequestsSchema);
+// const NewNftRequests = mongoose.model('NewNftRequests', NewNftRequestsSchema);
+
+// module.exports = {
+//     NewFtRequests,
+//     NewNftRequests
+// }
 
 
 

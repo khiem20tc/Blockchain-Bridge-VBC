@@ -12,7 +12,7 @@ const cors = require('cors');
 //Connect db
 require('./model/db');
 //Start auto_admin server
-require('./process/auto_admin')
+// require('./process/auto_admin')
 
 const app = express();
 const port = process.env.PORT || 3000;

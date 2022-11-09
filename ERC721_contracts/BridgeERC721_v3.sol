@@ -23,8 +23,10 @@ interface MintIERC721 is IERC721 {
 contract BridgeERC721_v3 is ERC165, IERC721Receiver {
     mapping (address => bool) public admins;
     mapping (address => bool) public super_admins;
-    //From => to => isLock => Nonce
-    mapping (address => mapping(address => mapping(bool => uint256))) public Nonces;
+    
+    //From => to => tokenId => isLock => NumTransact (Uint256)
+    mapping (address => mapping(address => mapping(uint256 => mapping(bool => uint256)))) public NumTransact;
+
 
     event TransactMultiTokens(address indexed from, address indexed to, uint256[] tokenIds, bool is_lock);
 
@@ -67,8 +69,8 @@ contract BridgeERC721_v3 is ERC165, IERC721Receiver {
     function lock_multiples(uint256[] memory tokenIds, address from_contract_add, address to) public {
         MintIERC721 caller_contract = MintIERC721(from_contract_add);
         for (uint i = 0; i < tokenIds.length; i++){
+            NumTransact[msg.sender][to][tokenIds[i]][true] += 1;
             caller_contract.safeTransferFrom(msg.sender, address(this), tokenIds[i]);
-            Nonces[msg.sender][to][true] += 1;
         }
         emit TransactMultiTokens(msg.sender, to, tokenIds, true);
         
@@ -84,7 +86,7 @@ contract BridgeERC721_v3 is ERC165, IERC721Receiver {
             uint256 tokenId = tokenIds[i];
             string memory _tokenURI = tokenURIs[i];
 
-            uint256 nonce = Nonces[from][msg.sender][false];
+            uint256 nonce = NumTransact[from][msg.sender][tokenIds[i]][false];
             bytes32 messageHash = keccak256(abi.encodePacked("unlock_multiples", from, msg.sender, tokenId, nonce));
             bool check = check_signature(messageHash, signatures[i]);
             require(check == true, "Fail to verify");
@@ -94,8 +96,8 @@ contract BridgeERC721_v3 is ERC165, IERC721Receiver {
             } catch {
                 caller_contract.mint(tokenId, _tokenURI);
             }
+            NumTransact[from][msg.sender][tokenIds[i]][false] += 1;
             caller_contract.safeTransferFrom(address(this), msg.sender, tokenId);
-            Nonces[from][msg.sender][false] += 1;
         }
         emit TransactMultiTokens(from, msg.sender, tokenIds, false);
     }

@@ -10,11 +10,11 @@ const {AddressERC721} = require('../config/index').ERC721Info;
 // UPDATE: Check isApprovedForAll => setApprovalForAll 
 
 const lock_multiples = async({username, bridge_name, tokenIds, to}) => {
-    return (await registeredFunc("lock_multiples", [tokenIds, AddressERC721, to], bridge_name, username, "NFT"));
+    return (await registeredFunc("lock_multiples", false, [tokenIds, AddressERC721, to], bridge_name, username, "NFT"));
 }
 
 const unlock_multiples = async({username, bridge_name, from, tokenIds}) => {
-    return (await registeredFunc("unlock_multiples", [from, tokenIds, AddressERC721], bridge_name, username, "NFT"));
+    return (await registeredFunc("unlock_multiples", true, [from, tokenIds, AddressERC721], bridge_name, username, "NFT"));
 }
 
 

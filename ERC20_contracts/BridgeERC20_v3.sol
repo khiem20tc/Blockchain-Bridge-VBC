@@ -19,8 +19,9 @@ interface MintableIERC20 is IERC20{
 contract BridgeERC20 {
     mapping (address => bool) public admins;
     mapping (address => bool) public super_admins;
-    //From_address => To_address => isNative => isLock => Uint256
-    mapping (address => mapping(address => mapping(bool => mapping(bool => uint256)))) public Nonces;
+    
+    //From_address => To_address => isNative => isLock => Uint256 (Amounts)
+    mapping (address => mapping(address => mapping(bool => mapping(bool => uint256)))) public TrackingAmounts;
     
     event TransactToken(address indexed from, address indexed to, uint256 indexed amount, bool is_native, bool is_lock);
 
@@ -57,7 +58,7 @@ contract BridgeERC20 {
     //Automatic receive - To transfer from 1 acc to the same acc - Web3 doesn't support subscription, code backend later
     receive() external payable {
         require(msg.value > 0);
-        Nonces[msg.sender][msg.sender][true][true] += 1;
+        TrackingAmounts[msg.sender][msg.sender][true][true] += msg.value;
         emit TransactToken(msg.sender, msg.sender, msg.value, true, true);
     }
 
@@ -65,7 +66,7 @@ contract BridgeERC20 {
     //Receiver
     function receive_native(address to) public payable {
         require(msg.value > 0, "Transfer zero");
-        Nonces[msg.sender][to][true][true] += 1;
+        TrackingAmounts[msg.sender][to][true][true] += msg.value;
         emit TransactToken(msg.sender, to, msg.value, true, true);
     }
 
@@ -73,24 +74,24 @@ contract BridgeERC20 {
     //Transfer Native
     function transfer_native(address from, uint256 amount, bytes memory signature) public payable {
         require(amount <= address(this).balance);
-        uint256 nonce = Nonces[from][msg.sender][true][false];
+        uint256 nonce = TrackingAmounts[from][msg.sender][true][false];
         bytes32 messageHash = keccak256(abi.encodePacked("transfer_native", from, msg.sender, amount, nonce));
         bool check = check_signature(messageHash, signature);
         require(check == true, "Fail to verify");
 
+        TrackingAmounts[from][msg.sender][true][false] += msg.value;
         (bool sent, ) = (msg.sender).call{value: amount}("");
         require(sent == true, "Fail to transfer");
-        Nonces[from][msg.sender][true][false] += 1;
         emit TransactToken(from, msg.sender, amount, true, false);
     }
 
 
     //Lock, require APPROVAL
     function lock(address from_contract_add, uint256 amount, address to) public {
+        TrackingAmounts[msg.sender][to][false][true] += amount;
         IERC20 from_contract = IERC20(from_contract_add);
         bool success = from_contract.transferFrom(msg.sender, address(this), amount);
         require(success == true, "Can't lock");
-        Nonces[msg.sender][to][false][true] += 1;
         emit TransactToken(msg.sender, to, amount, false, true);
     }
 
@@ -98,11 +99,12 @@ contract BridgeERC20 {
     //Unlock
     function unlock(address from, address to_contract_add, uint256 amount, bytes memory signature) public {
         address to = msg.sender;
-        uint256 nonce = Nonces[from][to][false][false];
+        uint256 nonce = TrackingAmounts[from][to][false][false];
         bytes32 messageHash = keccak256(abi.encodePacked("unlock", from, to, amount, nonce));
         bool check = check_signature(messageHash, signature);
         require(check == true, "Fail to verify");
-        
+
+        TrackingAmounts[from][to][false][false] += amount;
         MintableIERC20 to_contract = MintableIERC20(to_contract_add);
         uint256 total = to_contract.balanceOf(address(this));
         if (total < amount){
@@ -110,7 +112,6 @@ contract BridgeERC20 {
         }
         bool success = to_contract.transfer(to, amount);
         require(success == true, "Can't unlock");
-        Nonces[from][to][false][false] += 1;
         emit TransactToken(from, to, amount, false, false);
     }
 }

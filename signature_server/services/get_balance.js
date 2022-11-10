@@ -20,4 +20,4 @@ async function getBalance({bridge_name, address}){
     return balance
 }
 
-module.exports = getBalance
+module.exports = getBalance;

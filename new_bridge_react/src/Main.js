@@ -362,8 +362,8 @@ class Main extends React.Component{
       let request;
       let added;
       if (this.state.currency !== "ERC721 token"){
-        const from_balance_num = await user_contract.methods.balanceOf(this.state.sender_address).call({from: transact_sender});
-        const to_balance_num = await user_contract.methods.balanceOf(this.state.receiver_address).call({from: transact_sender});
+        const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
+        const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num

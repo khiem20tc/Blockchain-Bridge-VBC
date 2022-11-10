@@ -46,8 +46,7 @@ const joi_schema_request_approval = Joi.object({
 })
 
 const joi_schema_get_balance = Joi.object({
-    username: Joi.string().required(),
-    account: user_address,
+    address: user_address,
     bridge_name: Joi.string().required().valid('MBC', 'AGD')
 })
 

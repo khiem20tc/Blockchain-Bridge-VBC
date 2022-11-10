@@ -1,5 +1,6 @@
 const template = require('./template');
-const {lock, unlock, receive_native, transfer_native, getBalance} = require('../services/index');
+const {lock, unlock, receive_native, transfer_native} = require('../services/index');
+const getBalance = require('../services/get_balance');
 
 const lockController = template(async(req) => {
     return (await lock(req.body));

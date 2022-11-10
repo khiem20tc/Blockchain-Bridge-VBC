@@ -28,14 +28,14 @@ const transfer_native = async({username, bridge_name, from, amount}) => {
     
 }
 
-const getBalance = async({username, bridge_name, account}) => {
-    return(await registeredFunc("balanceOf", false, [account], bridge_name, username, "FT"));
-}
+// const getBalance = async({username, bridge_name, account}) => {
+//     return(await registeredFunc("balanceOf", false, [account], bridge_name, username, "FT"));
+// }
 
 module.exports = {
     lock,
     receive_native,
     unlock,
     transfer_native,
-    getBalance
+    // getBalance
 }

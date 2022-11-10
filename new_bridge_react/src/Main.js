@@ -199,9 +199,8 @@ class Main extends React.Component{
       });
       console.log(this.state.success_link);
       if (this.state.currency !== "ERC721 token"){
-        const user = localStorage.getItem("username");
-        const from_balance_num = await this.getBalance(user, this.state.sender_address, this.state.from_network);
-        const to_balance_num = await this.getBalance(user, this.state.receiver_address, this.state.to_network);
+        const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
+        const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num
@@ -223,7 +222,7 @@ class Main extends React.Component{
 
   //Without login
   //FROM
-  FE_ERC20_lockToken = async(web3, user_contract, bridge_contract) => {
+  FE_ERC20_lockToken = async(web3, user_contract, bridge_contract, signature) => {
     const allowance = await user_contract.methods.allowance(this.state.sender_address, ERC20_BridgeAddress).call({from: this.state.sender_address});
     if (!web3.utils.toBN(this.state.amount).sub(web3.utils.toBN(allowance)).isNeg()){
       await user_contract.methods.increaseAllowance(ERC20_BridgeAddress, web3.utils.toBN(this.state.amount).sub(web3.utils.toBN(allowance))).send({from: this.state.sender_address, gas: '8000000'});
@@ -234,29 +233,29 @@ class Main extends React.Component{
     return receipt
   }
   //TO
-  FE_ERC20_unlockToken = async(web3, user_contract, bridge_contract) => {
+  FE_ERC20_unlockToken = async(web3, user_contract, bridge_contract, signature) => {
     const receipt = await bridge_contract.methods
-                  .unlock(this.state.sender_address, ERC20_UserAddress, this.state.amount)
+                  .unlock(this.state.sender_address, ERC20_UserAddress, this.state.amount, signature)
                   .send({from: this.state.receiver_address, gas: '8000000'});
     return receipt
   }
   //FROM
-  FE_ERC20_receiveNative = async(web3, user_contract, bridge_contract) => {
+  FE_ERC20_receiveNative = async(web3, user_contract, bridge_contract, signature) => {
     const receipt = await bridge_contract.methods
                   .receive_native(this.state.receiver_address)
                   .send({from: this.state.sender_address, gas: '8000000', value: this.state.amount});
     return receipt
   }
   //TO
-  FE_ERC20_transferNative = async(web3, user_contract, bridge_contract) => {
+  FE_ERC20_transferNative = async(web3, user_contract, bridge_contract, signature) => {
     const receipt = await bridge_contract.methods
-                  .transfer_native(this.state.sender_address, this.state.amount)
+                  .transfer_native(this.state.sender_address, this.state.amount, signature)
                   .send({from: this.state.receiver_address, gas: '8000000'});
     return receipt
   }
 
   //FROM
-  FE_ERC721_lockMulti = async(web3, user_contract, bridge_contract) => {
+  FE_ERC721_lockMulti = async(web3, user_contract, bridge_contract, signature) => {
     await user_contract.methods.setApprovalForAll(ERC20_BridgeAddress, true).send({from: this.state.sender_address, gas: '8000000'});
     const receipt = await bridge_contract.methods
                   .lock_multiples(this.state.token_ids_arr, ERC721_UserAddress, this.state.receiver_address)
@@ -265,14 +264,14 @@ class Main extends React.Component{
   }
 
   //TO
-  FE_ERC721_unlockMulti = async(web3, user_contract, bridge_contract) => {
+  FE_ERC721_unlockMulti = async(web3, user_contract, bridge_contract, signature) => {
     const token_uris_arr = (await axios.post("http://localhost:3000/api/ERC721/get_URIs", {
       bridge_name: this.state.from_network,
       tokenIds: this.state.token_ids_arr
     })).data
     console.log(token_uris_arr)
     const receipt = await bridge_contract.methods
-                  .unlock_multiples(this.state.sender_address, this.state.token_ids_arr, token_uris_arr, ERC721_UserAddress)
+                  .unlock_multiples(this.state.sender_address, this.state.token_ids_arr, token_uris_arr, ERC721_UserAddress, signature)
                   .send({from: this.state.receiver_address, gas: '8000000'});
     return receipt
   }
@@ -284,6 +283,8 @@ class Main extends React.Component{
     let user_contract;
     let transact_sender;
     let bridge;
+    let signature = null;
+    let is_native;
 
     
 
@@ -303,22 +304,38 @@ class Main extends React.Component{
         }
       }
     } else {
-      bridge = this.state.to_network
-      if (this.state.purpose == "Draw"){
-        transact_sender = this.state.receiver_address;
-        if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
-          method = this.FE_ERC20_transferNative;
-          message = "Unable to transfer native";
+      bridge = this.state.to_network;
+      transact_sender = this.state.receiver_address;
+      if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
+        method = this.FE_ERC20_transferNative;
+        message = "Unable to transfer native";
+        is_native = true;
+      } else {
+        is_native = false;
+        if(this.state.currency == "ERC721 token"){
+          method = this.FE_ERC721_unlockMulti;
+          message = "Unable to unlock ERC721 token";
+          signature = (await axios.post("http://localhost:3000/api/signature", {
+            from: this.state.sender_address,
+            to: this.state.receiver_address,
+            to_network: this.state.to_network,
+            tokenIds: this.state.token_ids_arr,
+            is_NFT: true
+          })).data;
         } else {
-          if(this.state.currency == "ERC721 token"){
-            method = this.FE_ERC721_unlockMulti;
-            message = "Unable to unlock ERC721 token"
-          } else {
-            method = this.FE_ERC20_unlockToken;
-            message = "Unable to unlock ERC20 token"
-          }
+          method = this.FE_ERC20_unlockToken;
+          message = "Unable to unlock ERC20 token";
+          signature = (await axios.post("http://localhost:3000/api/signature", {
+            from: this.state.sender_address,
+            to: this.state.receiver_address,
+            to_network: this.state.to_network,
+            amount: this.state.amount,
+            is_native,
+            is_NFT: false
+          })).data;
         }
       }
+      
     }
 
     if (this.state.currency === "ERC721 token"){
@@ -330,7 +347,7 @@ class Main extends React.Component{
     }
     
     try{
-      const result = await method(this.state.user, user_contract, bridge_contract);
+      const result = await method(this.state.user, user_contract, bridge_contract, signature);
       console.log(result);
       console.log(bridge)
       const TxId = result.transactionHash;
@@ -350,21 +367,8 @@ class Main extends React.Component{
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num
-        });
-        let {from, to, is_native, amount, is_lock} = result.events.TransactToken.returnValues
-        if (is_lock){
-          request = {from, to, is_native, amount, isDeleted: 0, TxId, from_network: this.state.from_network}
-          console.log(request)
-          added = await axios.post("http://localhost:3000/api/ft_request", request)
-        }
-      } else {
-        let {from, to, tokenIds, is_lock} = result.events.TransactMultiTokens.returnValues
-        if (is_lock){
-          request = {from, to, tokenIds, isDeleted: 0, TxId, from_network: this.state.from_network}
-          console.log(request)
-          added = await axios.post("http://localhost:3000/api/nft_request", request)
-        }
-      }
+        }); 
+      } 
       console.log(added)
       return true
     }
@@ -383,10 +387,11 @@ class Main extends React.Component{
 
   //Common Function
 
-  getBalance = async (username, account, bridge_name) => {
+  getBalance = async (address, bridge_name) => {
     const balance = (await axios.post('http://localhost:3000/api/ERC20/getBalance', {
-      username, account, bridge_name
-    })).data.toString();
+      bridge_name,
+      address
+  })).data.toString();
     console.log(balance);
     return(balance);
   }

@@ -26,7 +26,7 @@ const ERC20_BridgeAbi = [
 				"type": "address"
 			},
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
@@ -46,6 +46,40 @@ const ERC20_BridgeAbi = [
 		],
 		"name": "TransactToken",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"name": "TrackingAmounts",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -87,57 +121,25 @@ const ERC20_BridgeAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address[]",
-				"name": "froms",
-				"type": "address[]"
+				"internalType": "bytes32",
+				"name": "messageHash",
+				"type": "bytes32"
 			},
 			{
-				"internalType": "address[]",
-				"name": "tos",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "amounts",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bool[]",
-				"name": "is_natives",
-				"type": "bool[]"
+				"internalType": "bytes",
+				"name": "signature",
+				"type": "bytes"
 			}
 		],
-		"name": "decrease_approvals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+		"name": "check_signature",
+		"outputs": [
 			{
-				"internalType": "address[]",
-				"name": "froms",
-				"type": "address[]"
-			},
-			{
-				"internalType": "address[]",
-				"name": "tos",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "amounts",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bool[]",
-				"name": "is_natives",
-				"type": "bool[]"
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
 			}
 		],
-		"name": "increase_approvals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -167,35 +169,6 @@ const ERC20_BridgeAbi = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"name": "max_approved",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
 				"name": "to",
 				"type": "address"
 			}
@@ -203,34 +176,6 @@ const ERC20_BridgeAbi = [
 		"name": "receive_native",
 		"outputs": [],
 		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address[]",
-				"name": "froms",
-				"type": "address[]"
-			},
-			{
-				"internalType": "address[]",
-				"name": "tos",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "amounts",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bool[]",
-				"name": "is_natives",
-				"type": "bool[]"
-			}
-		],
-		"name": "set_approvals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -263,6 +208,11 @@ const ERC20_BridgeAbi = [
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "signature",
+				"type": "bytes"
 			}
 		],
 		"name": "transfer_native",
@@ -286,12 +236,21 @@ const ERC20_BridgeAbi = [
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "signature",
+				"type": "bytes"
 			}
 		],
 		"name": "unlock",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ];
 
@@ -345,6 +304,40 @@ const ERC721_BridgeAbi = [
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"name": "NumTransact",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"name": "admins",
@@ -356,24 +349,6 @@ const ERC721_BridgeAbi = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "acc",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "allow",
-				"type": "bool"
-			}
-		],
-		"name": "change_admins",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -436,24 +411,6 @@ const ERC721_BridgeAbi = [
 	{
 		"inputs": [
 			{
-				"internalType": "address[]",
-				"name": "tos",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[][]",
-				"name": "token_ids",
-				"type": "uint256[][]"
-			}
-		],
-		"name": "set_multiple_approvals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -510,6 +467,11 @@ const ERC721_BridgeAbi = [
 				"internalType": "address",
 				"name": "to_contract_add",
 				"type": "address"
+			},
+			{
+				"internalType": "bytes[]",
+				"name": "signatures",
+				"type": "bytes[]"
 			}
 		],
 		"name": "unlock_multiples",
@@ -519,8 +481,8 @@ const ERC721_BridgeAbi = [
 	}
 ];
 
-const ERC20_BridgeAddress = "0xB82bF3bE5Db344166E1BAF04B622E2993F26A575";
-const ERC721_BridgeAddress = "0x8fb176226942147451C81A1a3fAe66C376186F22";
+const ERC20_BridgeAddress = "0x0710d7766B43068B721573d0125A56fb78E92963";
+const ERC721_BridgeAddress = "0x71c407cD33A36f8BC8803e6AEf51d5D9750ce867";
 
 
 export default ({

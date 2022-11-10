@@ -1,5 +1,3 @@
-const { sign } = require('jsonwebtoken');
-
 require('dotenv').config();
 const {mbc_bridge, agd_bridge} = require('../config/index').Web3Instances;
 const {MBC, AGD } = require('../config/index').Contracts;
@@ -27,12 +25,13 @@ const ERC20_signer = async({to_network, from, to, amount, is_native}) => {
     }
 
     const nonce = await contract.methods.TrackingAmounts(from, to, is_native, false).call({from: process.env.MBC_ADMIN});
-    const hash = web3.utils.soliditySha3({t: 'string', v: method_name}, 
+    console.log(method_name, from, to, amount, nonce);
+    const hash = mbc_bridge.utils.soliditySha3({t: 'string', v: method_name}, 
     {t: 'address', v: from},
     {t: 'address', v: to},
     {t: 'uint256', v: amount},
     {t: 'uint256', v: nonce});
-    const signature = await admin.sign(hash);
+    const signature = (await admin.sign(hash)).signature;
     console.log(signature);
     return(signature)
 }
@@ -56,7 +55,7 @@ const ERC721_single_signer = async({to_network, from, to, tokenId}) => {
     {t: 'address', v: to},
     {t: 'uint256', v: tokenId},
     {t: 'uint256', v: nonce});
-    const signature = await admin.sign(hash);
+    const signature = (await admin.sign(hash)).signature;
     console.log(signature);
     return(signature)
 }

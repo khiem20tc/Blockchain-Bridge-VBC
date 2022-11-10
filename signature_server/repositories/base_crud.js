@@ -1,5 +1,5 @@
 //Need to connect to db first
-const {NftRequests, FtRequests} = require('../model/index').requests;
+// const {NftRequests, FtRequests} = require('../model/index').requests;
 
 
 //username, password, privateKey

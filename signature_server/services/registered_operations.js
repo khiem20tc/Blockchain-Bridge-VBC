@@ -8,10 +8,11 @@ const NonceSubprovider = require('web3-provider-engine/subproviders/nonce-tracke
 const {ERC20_signer, ERC721_multiple_signer} = require('./admin_sign');
 const {verify_FT_request, verify_NFT_request} = require('./verify');
 
+
 const index = require('../config/index');
 const {getOne, create} = require('../repositories/index');
-const {accounts, requests} =  require('../model/index');
-const {FtRequests, NftRequests} = requests
+const {accounts} =  require('../model/index');
+
 
 
 
@@ -151,12 +152,13 @@ const registeredFunc = async(funcName, is_unlock, params, bridge_name, username,
             if (funcName == "unlock"){
                 is_native = false;
             }
+            console.log(params);
             valid = await verify_FT_request({
                 from: params[0],
                 to: Acc[0],
                 is_native,
                 to_network: bridge_name,
-                amount: params[-1]
+                amount: params[params.length - 1]
             });
             if (valid == false){
                 throw new Error("INVALID ERC20");
@@ -166,7 +168,7 @@ const registeredFunc = async(funcName, is_unlock, params, bridge_name, username,
                     from: params[0],
                     to: Acc[0],
                     is_native,
-                    amount: params[-1]
+                    amount: params[params.length - 1]
                 })
             } 
         }

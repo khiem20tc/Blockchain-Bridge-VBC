@@ -1,36 +1,45 @@
 require('dotenv').config();
 
 const {MBC, AGD} = require('../config/index').Contracts;
+const {mbc_bridge, agd_bridge} = require('../config/index').Web3Instances;
 
 
 const check_network = (to_network, token) => {
     let from_contract = MBC[token];
     let to_contract = AGD[token];
+    let web3 = agd_bridge;
     if (to_network == "MBC"){
         from_contract = AGD[token];
         to_contract = MBC[token];
+        web3 = mbc_bridge;
     }
 
-    return({from_contract, to_contract})
+    return({from_contract, to_contract, web3})
 }
 
 
 //to must be the Account address of user (Use Acc[0] if plugin Metamask)
 const verify_FT_request = async({from, to, is_native, to_network, amount}) => {
-    const {from_contract, to_contract} = check_network(to_network, "FT");
-    const lock_amount = await from_contract.methods.TrackingAmounts(from, to, !is_native, true).call({from: process.env.MBC_ADMIN});
-    const unlock_amount = await to_contract.methods.TrackingAmounts(from, to, is_native, false).call({from: process.env.MBC_ADMIN});
-    if (amount <= (lock_amount - unlock_amount)){
+    const {from_contract, to_contract, web3} = check_network(to_network, "FT");
+    const lock_amount = web3.utils.toBN((await from_contract.methods.TrackingAmounts(from, to, !is_native, true).call({from: process.env.MBC_ADMIN})));
+    const unlock_amount = web3.utils.toBN((await to_contract.methods.TrackingAmounts(from, to, is_native, false).call({from: process.env.MBC_ADMIN})));
+    console.log(lock_amount);
+    console.log(unlock_amount);
+    console.log(amount);
+    const cmp_val = (lock_amount.sub(unlock_amount)).cmp(amount);
+    console.log(cmp_val);
+    if (cmp_val == 1 || cmp_val == 0){
         return(true)
     }
     return(false)
 }
 
 const verify_single_token = async(from, to, to_network, tokenId) => {
-    const {from_contract, to_contract} = check_network(to_network, "NFT");
-    const lock_tx = await from_contract.methods.NumTransact(from, to, tokenId, true).call({from: process.env.MBC_ADMIN});
-    const unlock_tx = await to_contract.methods.NumTransact(from, to, tokenId, false).call({from: process.env.MBC_ADMIN});
-    if ((lock_tx > unlock_tx)){
+    const {from_contract, to_contract, web3} = check_network(to_network, "NFT");
+    const lock_tx = web3.utils.toBN(await from_contract.methods.NumTransact(from, to, tokenId, true).call({from: process.env.MBC_ADMIN}));
+    const unlock_tx = web3.utils.toBN(await to_contract.methods.NumTransact(from, to, tokenId, false).call({from: process.env.MBC_ADMIN}));
+    const cmp_val = lock_tx.cmp(unlock_tx);
+    if (cmp_val == 1){
         return(true)
     }
     return(false)
@@ -46,6 +55,19 @@ const verify_NFT_request = async({from, to, to_network, tokenIds}) => {
     }
     return(true)
 }
+
+// test = async() => {
+//     const valid = await verify_FT_request({
+//         from: "0x8FBF5A7505d323D0b957c0aF3FaB8Ceea9226758",
+//         to: "0x8FBF5A7505d323D0b957c0aF3FaB8Ceea9226758",
+//         is_native: true,
+//         to_network: "AGD",
+//         amount: "1000"
+//     });
+//     console.log(valid); 
+// }
+
+// test()
 
 module.exports = {
     verify_FT_request,

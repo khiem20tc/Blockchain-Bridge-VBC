@@ -64,3 +64,10 @@ module.exports =  {
     mbc_bridge: web3_mbc,
     agd_bridge: web3_agd
 };
+
+// const num1 = web3_mbc.utils.toBN("10000")
+// const num2 = web3_mbc.utils.toBN("10")
+// const cmp_val = num1.cmp(num2);
+// console.log(num2.sub(num1).cmp("1000"));
+// console.log(cmp_val);
+// console.log(cmp_val == 1);

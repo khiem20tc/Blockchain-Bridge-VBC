@@ -1,5 +1,5 @@
 const index = require('../config/index');
-require('dotenv').config();
+
 
 async function checkBridge(bridge_name){
     const private_key = process.env.KEY3
@@ -9,7 +9,7 @@ async function checkBridge(bridge_name){
         web3 = index.Web3Instances.agd_bridge;
     }
 
-    const user_contract = await new web3.eth.Contract(index.UserAbiERC721, process.env.ERC721_ADDRESS);
+    const user_contract = await new web3.eth.Contract(index.ERC721Info.AbiERC721, index.ERC721Info.AddressERC721);
     const Acc = await web3.eth.accounts.privateKeyToAccount(private_key);
     return ({Acc, user_contract});
 }

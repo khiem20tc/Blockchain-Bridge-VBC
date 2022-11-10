@@ -49,8 +49,8 @@ const ERC721_single_signer = async({to_network, from, to, tokenId}) => {
 
 
 
-    const nonce = await contract.methods.NumTransact(from, to, false).call({from: process.env.MBC_ADMIN});
-    const hash = web3.utils.soliditySha3({t: 'string', v: 'unlock_multiples'}, 
+    const nonce = await contract.methods.NumTransact(from, to, tokenId, false).call({from: process.env.MBC_ADMIN});
+    const hash = mbc_bridge.utils.soliditySha3({t: 'string', v: 'unlock_multiples'}, 
     {t: 'address', v: from},
     {t: 'address', v: to},
     {t: 'uint256', v: tokenId},

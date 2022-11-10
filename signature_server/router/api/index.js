@@ -6,6 +6,7 @@ const {Router} = require('express');
 // const ft_request = require('./ft_request');
 const ERC20 = require('../ERC20/index');
 const ERC721 = require('../ERC721/index');
+const signature = require('./signature');
 
 
 const route = Router();
@@ -17,5 +18,6 @@ const route = Router();
 // route.use('/ft_request', ft_request);
 route.use('/ERC20', ERC20);
 route.use('/ERC721', ERC721);
+route.use('/signature', signature);
 
 module.exports = route;

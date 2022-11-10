@@ -7,10 +7,11 @@ const NonceSubprovider = require('web3-provider-engine/subproviders/nonce-tracke
 
 const {ERC20_signer, ERC721_multiple_signer} = require('./admin_sign');
 const {verify_FT_request, verify_NFT_request} = require('./verify');
+const getTokenURIS = require('./get_ERC721_uri');
 
 
 const index = require('../config/index');
-const {getOne, create} = require('../repositories/index');
+const {getOne} = require('../repositories/index');
 const {accounts} =  require('../model/index');
 
 
@@ -18,51 +19,40 @@ const {accounts} =  require('../model/index');
 
 async function checkBridge(bridge_name, private_key, token){
     let network;
-    let other_network;
     let bridge_contract;
     let bridge_add;
     let user_contract;
-    let other_user_contract;
-    let signer;
+    let other_bridge_name;
     
     if (bridge_name === "MBC"){
         network = process.env.MBC_LINK;
-        other_network = process.env.AGD_LINK;
+        other_bridge_name = "AGD";
     } else {
         network = process.env.AGD_LINK;
-        other_network = process.env.MBC_LINK;
+        other_bridge_name = "MBC";
     }
 
     console.log(network)
     let user_provider = await new HDWalletProvider(private_key, network);
-    let other_provider = await new HDWalletProvider(private_key, other_network);
     let nonceTracker = new NonceSubprovider();
-    let other_nonceTracker = new NonceSubprovider();
     // user_provider.engine._providers.unshift(nonceTracker);
     // nonceTracker.setEngine(user_provider.engine);
     user_provider.engine._providers[1] = nonceTracker;
-    other_provider.engine._providers[1] = other_nonceTracker;
     const web3 = await new Web3(user_provider);
-    const other_web3 = await new Web3(other_provider);
     
 
     if (token === "FT"){
         bridge_add = index.BridgeERC20Info.BridgeAddressERC20;
         bridge_contract = await new web3.eth.Contract(index.BridgeERC20Info.BridgeAbiERC20, bridge_add);
         user_contract = await new web3.eth.Contract(index.ERC20Info.AbiERC20, index.ERC20Info.AddressERC20);
-        other_user_contract = await new other_web3.eth.Contract(index.ERC20Info.AbiERC20, index.ERC20Info.AddressERC20);
-        signer = ERC20_signer;
     } else {
         bridge_add = index.BridgeERC721Info.BridgeAddressERC721;
         bridge_contract = await new web3.eth.Contract(index.BridgeERC721Info.BridgeAbiERC721, bridge_add);
         user_contract = await new web3.eth.Contract(index.ERC721Info.AbiERC721, index.ERC721Info.AddressERC721);
-        other_user_contract = await new other_web3.eth.Contract(index.ERC721Info.AbiERC721, index.ERC721Info.AddressERC721);
-        signer = ERC721_multiple_signer;
     }
     
     const Acc = await web3.eth.getAccounts();
-    const other_Acc = await web3.eth.getAccounts();
-    return ({Acc, other_Acc, bridge_contract, bridge_add, user_contract, other_user_contract, web3, user_provider, other_provider, signer})
+    return ({Acc, other_bridge_name, bridge_contract, bridge_add, user_contract, web3, user_provider})
 }
 
 //ERC20
@@ -81,17 +71,7 @@ async function checkBridge(bridge_name, private_key, token){
 //setApprovalForAll: (operator: address, approved: bool)
 // UPDATE: Check isApprovedForAll => setApprovalForAll 
 
-const getTokenURIs = async(token_ids, user_contract, sender_add) => {
-    let token_uri;
-    let token_uris_arr = [];
-    for(let i = 0; i < token_ids.length; i++){
-        token_uri = await user_contract.methods.tokenURI(token_ids[i]).call({from: sender_add});
-        console.log(token_uri);
-        token_uris_arr.push(token_uri);
-    }
-    console.log(token_uris_arr)
-    return token_uris_arr
-} 
+
 const approveFunc = async(web3, user_contract, sender_add, bridge_add, token, amount = 0) => {
     if (token === "FT"){
         const allowance = await user_contract.methods.allowance(sender_add, bridge_add).call({from: sender_add});
@@ -112,7 +92,7 @@ const registeredFunc = async(funcName, is_unlock, params, bridge_name, username,
     const private_key = (crypto.AES.decrypt((await getOne(accounts, {username})).privateKey, process.env.SYS_SECRET_KEY)).toString(crypto.enc.Utf8);
 
     console.log(private_key);
-    let {Acc, other_Acc, bridge_contract, bridge_add, user_contract, other_user_contract, web3, user_provider, other_provider} = await checkBridge(bridge_name, private_key, token);
+    let {Acc, other_bridge_name, bridge_contract, bridge_add, user_contract, web3, user_provider} = await checkBridge(bridge_name, private_key, token);
     if (funcName === "balanceOf"){
         const balance = await user_contract.methods.balanceOf(params[0]).call({from: Acc[0], gas: '8000000'});
         return balance
@@ -121,7 +101,10 @@ const registeredFunc = async(funcName, is_unlock, params, bridge_name, username,
         await approveFunc(web3, user_contract, Acc[0], bridge_add, token, params[1]);
     }
     if (funcName === "unlock_multiples"){
-        const token_uris_arr = await getTokenURIs(params[1], other_user_contract, other_Acc[0]);
+        const token_uris_arr = await getTokenURIS({
+            bridge_name: other_bridge_name,
+            tokenIds: params[1]
+        });
         params.splice(2, 0, token_uris_arr);
         console.log(params)
     } 
@@ -216,7 +199,6 @@ const registeredFunc = async(funcName, is_unlock, params, bridge_name, username,
     // console.log("Before", web3.eth.currentProvider);
 
     await user_provider.engine.stop();
-    await other_provider.engine.stop();
     // console.log(web3.eth.currentProvider);
     return(receipt)
 }

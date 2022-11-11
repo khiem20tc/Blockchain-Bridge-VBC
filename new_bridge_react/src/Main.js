@@ -306,6 +306,9 @@ class Main extends React.Component{
     } else {
       bridge = this.state.to_network;
       transact_sender = this.state.receiver_address;
+
+
+
       if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
         method = this.FE_ERC20_transferNative;
         message = "Unable to transfer native";
@@ -315,17 +318,24 @@ class Main extends React.Component{
         if(this.state.currency == "ERC721 token"){
           method = this.FE_ERC721_unlockMulti;
           message = "Unable to unlock ERC721 token";
-          signature = (await axios.post("http://localhost:3000/api/signature", {
+          
+        } else {
+          method = this.FE_ERC20_unlockToken;
+          message = "Unable to unlock ERC20 token";
+          
+        }
+      }
+
+      if(this.state.currency == "ERC721 token"){
+        signature = (await axios.post("http://localhost:3000/api/signature", {
             from: this.state.sender_address,
             to: this.state.receiver_address,
             to_network: this.state.to_network,
             tokenIds: this.state.token_ids_arr,
             is_NFT: true
           })).data;
-        } else {
-          method = this.FE_ERC20_unlockToken;
-          message = "Unable to unlock ERC20 token";
-          signature = (await axios.post("http://localhost:3000/api/signature", {
+      } else {
+        signature = (await axios.post("http://localhost:3000/api/signature", {
             from: this.state.sender_address,
             to: this.state.receiver_address,
             to_network: this.state.to_network,
@@ -333,7 +343,6 @@ class Main extends React.Component{
             is_native,
             is_NFT: false
           })).data;
-        }
       }
       
     }
@@ -359,8 +368,6 @@ class Main extends React.Component{
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
       console.log(this.state.success_link);
-      let request;
-      let added;
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
@@ -369,7 +376,6 @@ class Main extends React.Component{
           to_balance: to_balance_num
         }); 
       } 
-      console.log(added)
       return true
     }
     catch(e){

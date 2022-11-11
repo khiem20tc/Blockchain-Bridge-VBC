@@ -17,16 +17,20 @@ const check_network = (to_network, token) => {
     return({from_contract, to_contract, web3})
 }
 
+async function getApproved({from, to, is_native, to_network}){
+    const {from_contract, to_contract, web3} = check_network(to_network, "FT");
+    const sender_address = process.env.MBC_ADMIN;
+    const lock_amount = web3.utils.toBN((await from_contract.methods.TrackingAmounts(from, to, !is_native, true).call({from: sender_address})));
+    const unlock_amount = web3.utils.toBN((await to_contract.methods.TrackingAmounts(from, to, is_native, false).call({from: sender_address})));
+    const approved = lock_amount.sub(unlock_amount);
+    return(approved);
+}
+
 
 //to must be the Account address of user (Use Acc[0] if plugin Metamask)
 const verify_FT_request = async({from, to, is_native, to_network, amount}) => {
-    const {from_contract, to_contract, web3} = check_network(to_network, "FT");
-    const lock_amount = web3.utils.toBN((await from_contract.methods.TrackingAmounts(from, to, !is_native, true).call({from: process.env.MBC_ADMIN})));
-    const unlock_amount = web3.utils.toBN((await to_contract.methods.TrackingAmounts(from, to, is_native, false).call({from: process.env.MBC_ADMIN})));
-    console.log(lock_amount);
-    console.log(unlock_amount);
-    console.log(amount);
-    const cmp_val = (lock_amount.sub(unlock_amount)).cmp(amount);
+    const approved = await getApproved({from, to, is_native, to_network});
+    const cmp_val = (approved).cmp(amount);
     console.log(cmp_val);
     if (cmp_val == 1 || cmp_val == 0){
         return(true)
@@ -71,5 +75,6 @@ const verify_NFT_request = async({from, to, to_network, tokenIds}) => {
 
 module.exports = {
     verify_FT_request,
-    verify_NFT_request
+    verify_NFT_request,
+    getApproved
 }

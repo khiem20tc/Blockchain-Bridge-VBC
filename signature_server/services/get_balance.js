@@ -1,16 +1,14 @@
 const index = require('../config/index');
-
+require('dotenv').config();
 
 async function checkBridge(bridge_name){
-    const private_key = process.env.KEY3
+    let user_contract;
     if (bridge_name === "MBC"){
-        web3 = index.Web3Instances.mbc_bridge;
+        user_contract = index.Contracts.MBC["FT"];
     } else {
-        web3 = index.Web3Instances.agd_bridge;
+        user_contract = index.Contracts.MBC["FT"];
     }
-
-    const user_contract = await new web3.eth.Contract(index.ERC20Info.AbiERC20, index.ERC20Info.AddressERC20);
-    const Acc = (await web3.eth.accounts.privateKeyToAccount(private_key)).address;
+    const Acc = process.env.MBC_ADMIN;
     return ({Acc, user_contract});
 }
 

@@ -1,5 +1,6 @@
 const template = require('./template');
 const {lock, unlock, receive_native, transfer_native} = require('../services/index');
+const {getApproved} = require('../services/verify');
 const getBalance = require('../services/get_balance')
 
 const lockController = template(async(req) => {
@@ -29,11 +30,17 @@ const getBalanceController = template(async(req) => {
     
 })
 
+const getApprovedController = template(async(req) => {
+    const approved = (await getApproved(req.body)).toString();
+    return(approved);
+})
+
 
 module.exports = {
     lockController,
     unlockController,
     transferNativeController,
     receiveNativeController,
-    getBalanceController
+    getBalanceController,
+    getApprovedController
 }

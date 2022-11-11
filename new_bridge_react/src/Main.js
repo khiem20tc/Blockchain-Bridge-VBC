@@ -47,6 +47,7 @@ class Main extends React.Component{
       amount: "",
       to_balance: "",
       from_balance: "",
+      max_approved: "",
       token_id: "",
       token_ids_arr: [],
       currency: 'MBC Native',
@@ -371,9 +372,16 @@ class Main extends React.Component{
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
+        const approved_num = await axios.post("http://localhost:3000/api/ERC20/getApproved", {
+          from: this.state.sender_address,
+          to: this.state.receiver_address,
+          is_native,
+          to_network: this.state.to_network
+        })
         this.setState({
           from_balance: from_balance_num,
-          to_balance: to_balance_num
+          to_balance: to_balance_num,
+          max_approved: approved_num
         }); 
       } 
       return true
@@ -585,6 +593,7 @@ class Main extends React.Component{
                     <div>
                       <p>From:</p>
                       <p>Token Balance: {this.state.from_balance}</p>
+                      <p></p>
                       <div className='small_div newArrow center'>
                         <select 
                           value={this.state.from_network}
@@ -647,6 +656,7 @@ class Main extends React.Component{
                     <div>
                       <p>To: </p>
                       <p>Token Balance: {this.state.to_balance}</p>
+                      <p>Max approved: {this.state.max_approved}</p>
                       <div className='small_div newArrow center'>
                         <select value={this.state.to_network} className='small_input_transparent'>
                           <option> {this.state.to_network} </option>

@@ -199,15 +199,22 @@ class Main extends React.Component{
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
       console.log(this.state.success_link);
-      let is_native = false;
-      if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
-        if (this.state.purpose == "Draw"){
-          is_native = true;
-        } else {
-          is_native = false;
-        }  
-      }
+      
       if (this.state.currency !== "ERC721 token"){
+        let is_native;
+        if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
+          if (this.state.purpose == "Draw"){
+            is_native = true;
+          } else {
+            is_native = false;
+          }  
+        } else {
+          if (this.state.purpose == "Draw"){
+            is_native = false;
+          } else {
+            is_native = true;
+          }  
+        }
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
         const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
@@ -221,6 +228,12 @@ class Main extends React.Component{
           to_balance: to_balance_num,
           max_approved: approved_num
         }); 
+      } else {
+        this.setState({
+          from_balance: "",
+          to_balance: "",
+          max_approved: ""
+        });
       }
       return true
     }
@@ -304,6 +317,11 @@ class Main extends React.Component{
 
     
     try{
+      const valid = await this.check();
+      if (valid == false){
+        alert("Wrong network");
+        return false
+      }
 
       if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
         if (this.state.purpose == "Draw"){
@@ -412,6 +430,12 @@ class Main extends React.Component{
           to_balance: to_balance_num,
           max_approved: approved_num
         }); 
+      } else {
+        this.setState({
+          from_balance: "",
+          to_balance: "",
+          max_approved: ""
+        });
       } 
       return true
     }
@@ -498,35 +522,32 @@ class Main extends React.Component{
 
   check = async () => {
     const chain_id = await window.ethereum.request({method: "eth_chainId"});
-    if (chain_id == "4444"){
-      if (this.state.currency !== "MBC Native" || this.state.currency !== "VAGD"){
+    console.log(chain_id);
+    if (chain_id == "0x115c"){
+      if (this.state.currency == "AGD Native" || this.state.currency == "VMBC"){
         return false
       }
       if (this.state.purpose == "Draw"){
         if (this.state.to_network == "AGD"){
-          alert("Wrong network");
           return false
         }
       } else {
         if (this.state.from_network == "AGD"){
-          alert("Wrong network");
           return false
         }
       }
       return true
     } else {
-      if (chain_id == "8888"){
-        if (this.state.currency !== "AGD Native" || this.state.currency !== "VMBC"){
+      if (chain_id == "0x22b8"){
+        if (this.state.currency == "MBC Native" || this.state.currency == "VAGD"){
           return false
         }
         if (this.state.purpose == "Draw"){
           if (this.state.to_network == "MBC"){
-            alert("Wrong network");
             return false
           }
         } else {
           if (this.state.from_network == "MBC"){
-            alert("Wrong network");
             return false
           }
         }

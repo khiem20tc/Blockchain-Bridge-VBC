@@ -79,7 +79,7 @@ contract BridgeERC20 {
         bool check = check_signature(messageHash, signature);
         require(check == true, "Fail to verify");
 
-        TrackingAmounts[from][msg.sender][true][false] += msg.value;
+        TrackingAmounts[from][msg.sender][true][false] += amount;
         (bool sent, ) = (msg.sender).call{value: amount}("");
         require(sent == true, "Fail to transfer");
         emit TransactToken(from, msg.sender, amount, true, false);

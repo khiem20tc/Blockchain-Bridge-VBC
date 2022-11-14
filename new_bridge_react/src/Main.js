@@ -199,13 +199,28 @@ class Main extends React.Component{
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
       console.log(this.state.success_link);
+      let is_native = false;
+      if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
+        if (this.state.purpose == "Draw"){
+          is_native = true;
+        } else {
+          is_native = false;
+        }  
+      }
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
+        const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
+          from: this.state.sender_address,
+          to: this.state.receiver_address,
+          is_native,
+          to_network: this.state.to_network
+        })).data;
         this.setState({
           from_balance: from_balance_num,
-          to_balance: to_balance_num
-        })
+          to_balance: to_balance_num,
+          max_approved: approved_num
+        }); 
       }
       return true
     }
@@ -288,6 +303,21 @@ class Main extends React.Component{
     let is_native;
 
     
+    try{
+
+      if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
+        if (this.state.purpose == "Draw"){
+          is_native = true;
+        } else {
+          is_native = false;
+        }  
+      } else {
+        if (this.state.purpose == "Draw"){
+          is_native = false;
+        } else {
+          is_native = true;
+        }  
+      }
 
     if (this.state.purpose == "Deposit"){
       bridge = this.state.from_network
@@ -313,9 +343,7 @@ class Main extends React.Component{
       if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
         method = this.FE_ERC20_transferNative;
         message = "Unable to transfer native";
-        is_native = true;
       } else {
-        is_native = false;
         if(this.state.currency == "ERC721 token"){
           method = this.FE_ERC721_unlockMulti;
           message = "Unable to unlock ERC721 token";
@@ -327,6 +355,7 @@ class Main extends React.Component{
         }
       }
 
+      
       if(this.state.currency == "ERC721 token"){
         signature = (await axios.post("http://localhost:3000/api/signature", {
             from: this.state.sender_address,
@@ -341,7 +370,7 @@ class Main extends React.Component{
             to: this.state.receiver_address,
             to_network: this.state.to_network,
             amount: this.state.amount,
-            is_native,
+            is_native: is_native,
             is_NFT: false
           })).data;
       }
@@ -356,7 +385,7 @@ class Main extends React.Component{
       user_contract = await new this.state.user.eth.Contract(ERC20_UserAbi, ERC20_UserAddress);
     }
     
-    try{
+  
       const result = await method(this.state.user, user_contract, bridge_contract, signature);
       console.log(result);
       console.log(bridge)
@@ -372,12 +401,12 @@ class Main extends React.Component{
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
-        const approved_num = await axios.post("http://localhost:3000/api/ERC20/getApproved", {
+        const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
           from: this.state.sender_address,
           to: this.state.receiver_address,
-          is_native,
+          is_native: is_native,
           to_network: this.state.to_network
-        })
+        })).data
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num,
@@ -451,6 +480,7 @@ class Main extends React.Component{
                 const amount = new BN("0" + event.target.value);
                 const convert = (new BN("10")).pow("18");
                 const converted = (amount.times(convert)).toString();
+                console.log(converted);
                 this.setState({
                   amountDisplay: event.target.value,
                   amount: converted
@@ -463,6 +493,47 @@ class Main extends React.Component{
           </div>
         </div>
       )
+    }
+  }
+
+  check = async () => {
+    const chain_id = await window.ethereum.request({method: "eth_chainId"});
+    if (chain_id == "4444"){
+      if (this.state.currency !== "MBC Native" || this.state.currency !== "VAGD"){
+        return false
+      }
+      if (this.state.purpose == "Draw"){
+        if (this.state.to_network == "AGD"){
+          alert("Wrong network");
+          return false
+        }
+      } else {
+        if (this.state.from_network == "AGD"){
+          alert("Wrong network");
+          return false
+        }
+      }
+      return true
+    } else {
+      if (chain_id == "8888"){
+        if (this.state.currency !== "AGD Native" || this.state.currency !== "VMBC"){
+          return false
+        }
+        if (this.state.purpose == "Draw"){
+          if (this.state.to_network == "MBC"){
+            alert("Wrong network");
+            return false
+          }
+        } else {
+          if (this.state.from_network == "MBC"){
+            alert("Wrong network");
+            return false
+          }
+        }
+        return true
+      } else {
+        return false
+      }
     }
   }
 
@@ -593,19 +664,17 @@ class Main extends React.Component{
                     <div>
                       <p>From:</p>
                       <p>Token Balance: {this.state.from_balance}</p>
-                      <p></p>
+                      <p> Max Approved: N/A </p>
                       <div className='small_div newArrow center'>
                         <select 
                           value={this.state.from_network}
                           onChange={(event) => {
                             this.setState({from_network: event.target.value});
                             if (event.target.value == "MBC"){
-                              this.setState({to_network: "AGD",
-                              currency: "MBC Native"
+                              this.setState({to_network: "AGD"
                             });
                             } else {
-                              this.setState({to_network: "MBC",
-                              currency: "AGD Native"
+                              this.setState({to_network: "MBC"
                             });
                             }
                           }}

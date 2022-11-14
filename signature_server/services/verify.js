@@ -23,6 +23,11 @@ async function getApproved({from, to, is_native, to_network}){
     const lock_amount = web3.utils.toBN((await from_contract.methods.TrackingAmounts(from, to, !is_native, true).call({from: sender_address})));
     const unlock_amount = web3.utils.toBN((await to_contract.methods.TrackingAmounts(from, to, is_native, false).call({from: sender_address})));
     const approved = lock_amount.sub(unlock_amount);
+    console.log(from, to, is_native, to_network);
+    console.log("VERIFY AMOUNT:");
+    console.log("LOCK", lock_amount.toString());
+    console.log("UNLOCK", unlock_amount.toString());
+    console.log("APPROVED", approved.toString());
     return(approved);
 }
 
@@ -30,9 +35,11 @@ async function getApproved({from, to, is_native, to_network}){
 //to must be the Account address of user (Use Acc[0] if plugin Metamask)
 const verify_FT_request = async({from, to, is_native, to_network, amount}) => {
     const approved = await getApproved({from, to, is_native, to_network});
-    const cmp_val = (approved).cmp(amount);
-    console.log(cmp_val);
-    if (cmp_val == 1 || cmp_val == 0){
+    const larger = !((approved.sub(mbc_bridge.utils.toBN(amount))).isNeg());
+    console.log(approved);
+    console.log(amount);
+    console.log(larger);
+    if (larger){
         return(true)
     }
     return(false)
@@ -42,8 +49,10 @@ const verify_single_token = async(from, to, to_network, tokenId) => {
     const {from_contract, to_contract, web3} = check_network(to_network, "NFT");
     const lock_tx = web3.utils.toBN(await from_contract.methods.NumTransact(from, to, tokenId, true).call({from: process.env.MBC_ADMIN}));
     const unlock_tx = web3.utils.toBN(await to_contract.methods.NumTransact(from, to, tokenId, false).call({from: process.env.MBC_ADMIN}));
-    const cmp_val = lock_tx.cmp(unlock_tx);
-    if (cmp_val == 1){
+    const diff = (lock_tx.sub(unlock_tx));
+    const larger = !diff.isNeg() && !diff.isZero();
+    console.log(larger);
+    if (larger){
         return(true)
     }
     return(false)

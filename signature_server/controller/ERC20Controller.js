@@ -1,7 +1,7 @@
 const template = require('./template');
 const {lock, unlock, receive_native, transfer_native} = require('../services/index');
 const {getApproved} = require('../services/verify');
-const getBalance = require('../services/get_balance')
+const {getBalance, getRealBalance} = require('../services/get_balance')
 
 const lockController = template(async(req) => {
     return (await lock(req.body));
@@ -30,6 +30,11 @@ const getBalanceController = template(async(req) => {
     
 })
 
+const getRealBalanceController = template(async(req) => {
+    return (await getRealBalance(req.body));
+    
+})
+
 const getApprovedController = template(async(req) => {
     const approved = (await getApproved(req.body)).toString();
     return(approved);
@@ -42,5 +47,6 @@ module.exports = {
     transferNativeController,
     receiveNativeController,
     getBalanceController,
+    getRealBalanceController,
     getApprovedController
 }

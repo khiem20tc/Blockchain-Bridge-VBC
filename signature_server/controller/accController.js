@@ -1,4 +1,4 @@
-const {login, register, validate_token} = require('../services/index');
+const {login, register, validate_token, get_address} = require('../services/index');
 const template = require('./template');
 
 const registerController = template(async(req) => {
@@ -16,8 +16,14 @@ const validateTokenController = template(async(req) => {
     return valid
 })
 
+const getAddressController = template(async(req) => {
+    const address = get_address(req.body);
+    return address
+})
+
 module.exports = {
     loginController,
     registerController,
-    validateTokenController
+    validateTokenController,
+    getAddressController
 }

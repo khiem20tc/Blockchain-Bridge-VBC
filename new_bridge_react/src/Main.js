@@ -45,7 +45,9 @@ class Main extends React.Component{
       receiver_address: '0x8FBF5A7505d323D0b957c0aF3FaB8Ceea9226758',
       amountDisplay: "",
       amount: "",
+      to_real_balance: "",
       to_balance: "",
+      from_real_balance: "",
       from_balance: "",
       max_approved: "",
       token_id: "",
@@ -685,6 +687,7 @@ class Main extends React.Component{
                     <div>
                       <p>From:</p>
                       <p>Token Balance: {this.state.from_balance}</p>
+                      <p>Real Balance: {this.state.from_real_balance}</p>
                       <p> Max Approved: N/A </p>
                       <div className='small_div newArrow center'>
                         <select 
@@ -746,6 +749,7 @@ class Main extends React.Component{
                     <div>
                       <p>To: </p>
                       <p>Token Balance: {this.state.to_balance}</p>
+                      <p>Real Balance: {this.state.to_real_balance}</p>
                       <p>Max approved: {this.state.max_approved}</p>
                       <div className='small_div newArrow center'>
                         <select value={this.state.to_network} className='small_input_transparent'>

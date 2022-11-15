@@ -1,15 +1,26 @@
 const User = require('../model/accounts');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto-js');
 const {create, getOne} = require('../repositories/index');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const {mbc_bridge} = require('../config/index').Web3Instances;
 
 
 const Logger = require('../utils/logger');
 
 //info_obj: {username, password, privateKey}
 const register = async(info_obj) => {
+    const acc = await mbc_bridge.eth.accounts.create(process.env.SYS_SECRET_KEY);
+    info_obj["privateKey"] = acc.privateKey;
     await create(User, info_obj);
+}
+
+const get_address = async({username}) => {
+    const user = await getOne(User, {username});
+    const private_key = (crypto.AES.decrypt(user.privateKey, process.env.SYS_SECRET_KEY)).toString(crypto.enc.Utf8)
+    const address = (await mbc_bridge.eth.accounts.privateKeyToAccount(private_key)).address;
+    return(address);
 }
 
 const login = async({username, password}) => {
@@ -40,7 +51,8 @@ const validate_token = async(token) => {
 module.exports = {
     login,
     register,
-    validate_token
+    validate_token,
+    get_address
 }
 
 // test = async() => {

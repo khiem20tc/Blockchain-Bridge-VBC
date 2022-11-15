@@ -20,7 +20,6 @@ class Login extends React.Component{
     this.state = {
       username: "",
       password: "",
-      privateKey: "",
       login: false
     }  
   }
@@ -34,7 +33,6 @@ class Login extends React.Component{
         const response = await axios.post('http://localhost:3000/user/register', {
         username: this.state.username,
         password: this.state.password,
-        privateKey: this.state.privateKey
         });
         console.log(response);
         this.setState({login: true});
@@ -100,16 +98,6 @@ class Login extends React.Component{
                             value= {this.state.username}
                             onChange = {(event) => {
                                 this.setState({username: event.target.value})
-                            }}
-                            style = {{width: '100%', height: '55px'}}
-                            className = 'large_input'/>
-                        </div>
-                        <div style={{width: '100%', height: '40%'}}>
-                          <h5> Private key: </h5>
-                          <input type="text" placeholder='Private Key'
-                            value= {this.state.privateKey}
-                            onChange = {(event) => {
-                                this.setState({privateKey: event.target.value})
                             }}
                             style = {{width: '100%', height: '55px'}}
                             className = 'large_input'/>

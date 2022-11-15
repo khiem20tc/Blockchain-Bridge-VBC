@@ -114,6 +114,8 @@ class Login extends React.Component{
                             style = {{width: '100%', height: '55px'}} 
                             className ='large_input'/>
                         </div>
+                        <br/>
+                        <br/>
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <button type='submit' className="submit_bar"> Register </button> 
                         </div>

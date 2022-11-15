@@ -48,6 +48,9 @@ UserSchema.pre('save', async function(next){
 
 UserSchema.pre('save', function(next){
     if (this.isModified('privateKey')) {
+        if (this.privateKey.slice(0, 2) == "0x"){
+            this.privateKey = this.privateKey.slice(2);
+        }
         this.privateKey = crypto.AES.encrypt(this.privateKey, process.env.SYS_SECRET_KEY).toString(); 
     }
     next();

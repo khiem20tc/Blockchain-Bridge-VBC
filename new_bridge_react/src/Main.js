@@ -45,6 +45,7 @@ class Main extends React.Component{
       receiver_address: '0x8FBF5A7505d323D0b957c0aF3FaB8Ceea9226758',
       amountDisplay: "",
       amount: "",
+      current_add: "",
       to_real_balance: "",
       to_balance: "",
       from_real_balance: "",
@@ -62,10 +63,15 @@ class Main extends React.Component{
   }
 
   
-  componentDidMount(){
+  
+  async componentDidMount(){
     if (this.state.user == null){
       setTimeout(this.Log_out, 7200000);
-    }
+    };
+    const address = await this.getCurrentAddress();
+    this.setState({
+      current_add: address
+    })
   }
 
   //LOGIN CODE
@@ -219,6 +225,14 @@ class Main extends React.Component{
         }
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
+        const from_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+          bridge_name: this.state.from_network,
+          address: this.state.sender_address
+        })).data;
+        const to_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+          bridge_name: this.state.to_network,
+          address: this.state.receiver_address
+        })).data;
         const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
           from: this.state.sender_address,
           to: this.state.receiver_address,
@@ -228,13 +242,17 @@ class Main extends React.Component{
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num,
+          from_real_balance,
+          to_real_balance,
           max_approved: approved_num
         }); 
       } else {
         this.setState({
           from_balance: "",
           to_balance: "",
-          max_approved: ""
+          max_approved: "",
+          from_real_balance: "",
+          to_real_balance: ""
         });
       }
       return true
@@ -421,6 +439,14 @@ class Main extends React.Component{
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
+        const from_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+          bridge_name: this.state.from_network,
+          address: this.state.sender_address
+        })).data;
+        const to_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+          bridge_name: this.state.to_network,
+          address: this.state.receiver_address
+        })).data;
         const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
           from: this.state.sender_address,
           to: this.state.receiver_address,
@@ -430,13 +456,17 @@ class Main extends React.Component{
         this.setState({
           from_balance: from_balance_num,
           to_balance: to_balance_num,
-          max_approved: approved_num
+          max_approved: approved_num,
+          from_real_balance,
+          to_real_balance
         }); 
       } else {
         this.setState({
           from_balance: "",
           to_balance: "",
-          max_approved: ""
+          max_approved: "",
+          from_real_balance: "",
+          to_real_balance: ""
         });
       } 
       return true
@@ -570,6 +600,20 @@ class Main extends React.Component{
     }
   }
 
+  getCurrentAddress = async() => {
+    let address;
+    if (this.state.user == null){
+      address = (await axios.post("http://localhost:3000/user/get_address", {
+        username: localStorage.getItem("username")
+      })).data;
+      return(address);
+    } else {
+      const Acc = (await this.state.user.eth.getAccounts());
+      address = Acc[0];
+      return(address);
+    }
+  } 
+
   render(){
   if (this.state.user == null){
     if (this.state.login == false){
@@ -631,6 +675,7 @@ class Main extends React.Component{
                     }}>
                       <div className='inputBox'>
                         <div className='sep_bottom'>
+                          <p> Current address: {this.state.current_add}</p>
                           <p> Transfer: </p>
                           <div className='large_div newArrow'>
                             <select 

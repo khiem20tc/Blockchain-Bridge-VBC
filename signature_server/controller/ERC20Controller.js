@@ -1,4 +1,5 @@
 const template = require('./template');
+const {mbc_bridge} = require('../config/index').Web3Instances;
 const {lock, unlock, receive_native, transfer_native} = require('../services/index');
 const {getApproved} = require('../services/verify');
 const {getBalance, getRealBalance} = require('../services/get_balance')
@@ -37,7 +38,8 @@ const getRealBalanceController = template(async(req) => {
 
 const getApprovedController = template(async(req) => {
     const approved = (await getApproved(req.body)).toString();
-    return(approved);
+    const approved_eth = await mbc_bridge.utils.fromWei(approved, 'ether');
+    return(approved_eth);
 })
 
 

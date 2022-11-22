@@ -7,12 +7,13 @@ const jwt = require('jsonwebtoken');
 const {mbc_bridge} = require('../config/index').Web3Instances;
 
 
-const Logger = require('../utils/logger');
+
 
 //info_obj: {username, password, privateKey}
 const register = async(info_obj) => {
     const acc = await mbc_bridge.eth.accounts.create(process.env.SYS_SECRET_KEY);
     info_obj["privateKey"] = acc.privateKey;
+    // console.log(info_obj);
     await create(User, info_obj);
 }
 

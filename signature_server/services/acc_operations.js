@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const {mbc_bridge} = require('../config/index').Web3Instances;
 
 
-const Logger = require('../utils/logger');
+
 
 //info_obj: {username, password, privateKey}
 const register = async(info_obj) => {

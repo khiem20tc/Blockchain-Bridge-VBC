@@ -55,7 +55,7 @@ contract BridgeERC20 {
         return(admins[signer] || super_admins[signer]);
     }
 
-    //Automatic receive - To transfer from 1 acc to the same acc - Web3 doesn't support subscription, code backend later
+    //Automatic receive - To transfer from 1 acc to the same acc 
     receive() external payable {
         require(msg.value > 0);
         TrackingAmounts[msg.sender][msg.sender][true][true] += msg.value;

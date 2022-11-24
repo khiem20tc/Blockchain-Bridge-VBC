@@ -2,7 +2,7 @@ const User = require('../model/accounts');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto-js');
 const {create, getOne} = require('../repositories/index');
-require('dotenv').config();
+//require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const {mbc_bridge} = require('../config/index').Web3Instances;
 

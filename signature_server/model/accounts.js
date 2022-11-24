@@ -1,5 +1,5 @@
 //Load .env variables
-require('dotenv').config();
+//require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto-js');

@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 
 const {MBC, AGD} = require('../config/index').Contracts;
 const {mbc_bridge, agd_bridge} = require('../config/index').Web3Instances;

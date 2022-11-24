@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 
 const AddressERC721 = process.env.ERC721_ADDRESS;
 const AbiERC721 = [

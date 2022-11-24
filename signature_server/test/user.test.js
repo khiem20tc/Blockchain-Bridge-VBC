@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 const request = require("supertest");
 const base_crud = require("../repositories/index");
 const {expect} = require("chai");

@@ -1,4 +1,4 @@
-require("dotenv").config();
+//require('dotenv').config();
 const Logger = require('../utils/logger');
 
 const template = (mainFunc) => async(req, res) => {

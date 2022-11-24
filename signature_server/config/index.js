@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 const config_consts = {
     BridgeERC20Info: require('./bridge_ERC20'),
     BridgeERC721Info: require('./bridge_ERC721'),

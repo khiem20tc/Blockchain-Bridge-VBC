@@ -1,7 +1,7 @@
 const BridgeERC20 = artifacts.require("BridgeERC20");
 const ERC20_v2 = artifacts.require("ERC20_v2");
 const ERC721_v2 = artifacts.require("ERC721_v2");
-const BridgeERC721 = artifacts.require("BridgeERC721");
+const BridgeERC721 = artifacts.require("BridgeERC721_v3");
 
 
 module.exports = function(deployer) {

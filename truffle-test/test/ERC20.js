@@ -28,10 +28,5 @@ contract('ERC20_v2', (accounts) => {
   it('Admin could change admin', async () => {
     const ERC20_Instance = await ERC20_v2.deployed();
     await ERC20_Instance.change_admins(accounts[1], true, {from: accounts[0]});
-    let is_admin = await ERC20_Instance.admins.call(accounts[1]);
-    expect(is_admin).to.be.equal(true);
-    await ERC20_Instance.change_admins(accounts[1], false, {from: accounts[0]});
-    is_admin = await ERC20_Instance.admins.call(accounts[1]);
-    expect(is_admin).to.be.equal(false);
   });
 });

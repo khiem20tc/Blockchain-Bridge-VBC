@@ -14965,7 +14965,7 @@
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-11-24T04:48:59.486Z",
+  "updatedAt": "2022-11-24T06:36:41.072Z",
   "devdoc": {
     "details": "Create a sample ERC20 standard token",
     "kind": "dev",

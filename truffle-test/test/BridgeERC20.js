@@ -2,7 +2,6 @@ const assert = require("assert");
 const { expect } = require("chai");
 const BN = require("bn.js");
 const Web3 = require("web3");
-const { Mbc_key } = require("../../signature_server/config");
 
 
 const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
@@ -57,24 +56,10 @@ contract("BridgeERC20", (accounts) => {
         expect(valid).to.be.equal(true);
     })
 
-    it("Unlock ERC20 token", async() => {
-        const BridgeERC20_Instance = await BridgeERC20.deployed();
-        const ERC20_Instance = await ERC20_v2.deployed();
-        //Lock:
-        await ERC20_lock(BridgeERC20_Instance, ERC20_Instance, accounts);
-        const signature = await ERC20_signer({from: accounts[0], to: accounts[0], amount: "2000", is_native: false, mbc_key: test_admin_pk, mbc_contract: BridgeERC20_Instance, accounts});
-        const initialTracking = new BN(await BridgeERC20_Instance.TrackingAmounts.call(accounts[0], accounts[0], false, false));
-        await BridgeERC20_Instance.unlock(accounts[0], ERC20_Instance.address, "2000", signature, {from: accounts[0]});
-        const afterTracking = new BN(await BridgeERC20_Instance.TrackingAmounts.call(accounts[0], accounts[0], false, false));
-        const valid = ((afterTracking.sub(initialTracking)).sub(new BN("2000"))).isZero();
-        expect(valid).to.be.equal(true);
-    })
 
     it("Unlock ERC20 token", async() => {
         const BridgeERC20_Instance = await BridgeERC20.deployed();
         const ERC20_Instance = await ERC20_v2.deployed();
-        //Lock:
-        await ERC20_lock(BridgeERC20_Instance, ERC20_Instance, accounts);
         const signature = await ERC20_signer({from: accounts[0], to: accounts[0], amount: "2000", is_native: false, mbc_key: test_admin_pk, mbc_contract: BridgeERC20_Instance, accounts});
         const initialTracking = new BN(await BridgeERC20_Instance.TrackingAmounts.call(accounts[0], accounts[0], false, false));
         await BridgeERC20_Instance.unlock(accounts[0], ERC20_Instance.address, "2000", signature, {from: accounts[0]});
@@ -85,8 +70,6 @@ contract("BridgeERC20", (accounts) => {
 
     it("Unlock native", async() => {
         const BridgeERC20_Instance = await BridgeERC20.deployed();
-        //Lock
-        await BridgeERC20_Instance.receive_native(accounts[0], {from: accounts[0], value: "2000"});
         const signature = await ERC20_signer({from: accounts[0], to: accounts[0], amount: "2000", is_native: true, mbc_key: test_admin_pk, mbc_contract: BridgeERC20_Instance, accounts});
         const initialTracking = new BN(await BridgeERC20_Instance.TrackingAmounts.call(accounts[0], accounts[0], true, false));
         await BridgeERC20_Instance.transfer_native(accounts[0], "2000", signature, {from: accounts[0]});

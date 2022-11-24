@@ -23426,7 +23426,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-11-24T04:48:59.412Z",
+  "updatedAt": "2022-11-24T06:36:40.814Z",
   "devdoc": {
     "details": "Create a sample ERC721 standard token",
     "kind": "dev",

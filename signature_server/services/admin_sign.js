@@ -2,18 +2,20 @@ require('dotenv').config();
 const {mbc_bridge, agd_bridge} = require('../config/index').Web3Instances;
 const {MBC, AGD } = require('../config/index').Contracts;
 
+const mbc_admin = mbc_bridge.eth.accounts.privateKeyToAccount(process.env.MNEMONIC1);
+const agd_admin = agd_bridge.eth.accounts.privateKeyToAccount(process.env.MNEMONIC2);
 
 
-const ERC20_signer = async({to_network, from, to, amount, is_native, mbc_key = process.env.MNEMONIC1, agd_key = process.env.MNEMONIC2}) => {
+const ERC20_signer = async({to_network, from, to, amount, is_native}) => {
     let contract;
     let method_name;
     let admin;
     if (to_network == "MBC"){
         contract = MBC["FT"];
-        admin = mbc_bridge.eth.accounts.privateKeyToAccount(mbc_key);
+        admin = mbc_admin;
     } else {
         contract = AGD["FT"];
-        admin = agd_bridge.eth.accounts.privateKeyToAccount(agd_key);
+        admin = agd_admin;
     }
 
     if (is_native){
@@ -22,7 +24,7 @@ const ERC20_signer = async({to_network, from, to, amount, is_native, mbc_key = p
         method_name = "unlock"
     }
 
-    const nonce = await contract.methods.TrackingAmounts(from, to, is_native, false).call({from: admin.address});
+    const nonce = await contract.methods.TrackingAmounts(from, to, is_native, false).call({from: process.env.MBC_ADMIN});
     console.log(method_name, from, to, amount, nonce);
     const hash = mbc_bridge.utils.soliditySha3({t: 'string', v: method_name}, 
     {t: 'address', v: from},
@@ -34,20 +36,20 @@ const ERC20_signer = async({to_network, from, to, amount, is_native, mbc_key = p
     return(signature)
 }
 
-const ERC721_single_signer = async({to_network, from, to, tokenId, mbc_key = process.env.MNEMONIC1, agd_key = process.env.MNEMONIC2}) => {
+const ERC721_single_signer = async({to_network, from, to, tokenId}) => {
     let contract;
     let admin;
     if (to_network == "MBC"){
         contract = MBC["NFT"];
-        admin = mbc_bridge.eth.accounts.privateKeyToAccount(mbc_key);
+        admin = mbc_admin;
     } else {
         contract = AGD["NFT"];
-        admin = agd_bridge.eth.accounts.privateKeyToAccount(agd_key);
+        admin = agd_admin;
     }
 
 
 
-    const nonce = await contract.methods.NumTransact(from, to, tokenId, false).call({from: admin.address});
+    const nonce = await contract.methods.NumTransact(from, to, tokenId, false).call({from: process.env.MBC_ADMIN});
     const hash = mbc_bridge.utils.soliditySha3({t: 'string', v: 'unlock_multiples'}, 
     {t: 'address', v: from},
     {t: 'address', v: to},

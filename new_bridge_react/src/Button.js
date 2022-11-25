@@ -25,6 +25,7 @@ class SubmitButton extends React.Component{
                                     <img src={Icon} alt="Icon"/>
                                 </Col>
                                 <Col
+                                id="btnStatus"
                                 className='left'>
                                     Success!
                                 </Col>
@@ -57,6 +58,7 @@ class SubmitButton extends React.Component{
                                     <img src={ErrorIcon} alt="Icon"/>
                                 </Col>
                                 <Col
+                                id="btnStatus"
                                 className='left'>
                                     Error!
                                 </Col>

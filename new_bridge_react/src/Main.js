@@ -501,7 +501,7 @@ class Main extends React.Component{
         <div>
           <div className='sep_bottom'>
             <p> Token Id </p>
-            <input type="text" placeholder='Token ids [ ]'
+            <input id="tokenId" type="text" placeholder='Token ids [ ]'
               value = {this.state.token_id}
               onChange = {async (event) => {
                 await this.setState({token_id: event.target.value});
@@ -530,7 +530,7 @@ class Main extends React.Component{
         <div>
           <div className='sep_bottom'>
             <p> Amount in Ether: </p>
-            <input type="text" placeholder='Amount in Ether'
+            <input id="amountEther" type="text" placeholder='Amount in Ether'
               value = {this.state.amountDisplay}
               onChange = {(event) => {
                 const amount = new BN("0" + event.target.value);
@@ -754,7 +754,7 @@ class Main extends React.Component{
                       </div>
                     </div>
                     <div>
-                      <input type="text" placeholder='Sender address'
+                      <input id="senderAddress" type="text" placeholder='Sender address'
                         value = {this.state.sender_address}
                         onChange = {event => this.setState({sender_address: event.target.value.trim()})} 
                         className ='small_input'/>
@@ -803,7 +803,7 @@ class Main extends React.Component{
                       </div>
                     </div>
                     <div>
-                      <input type="text" placeholder='Receiver address'
+                      <input id="receiverAddress" type="text" placeholder='Receiver address'
                         value = {this.state.receiver_address}
                         onChange = {event => this.setState({receiver_address: event.target.value.trim()})} 
                         className ='small_input'/>

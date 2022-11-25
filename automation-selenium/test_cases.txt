@@ -1,0 +1,6 @@
+ERC20:
+Sender + Receiver: 0x8FBF5A7505d323D0b957c0aF3FaB8Ceea9226758 
+Lock Native (AGD): 0.0001 MBC
+Unlock VMBC (AGD): 0.0001 VMBC
+Lock VMBC (AGD): 0.0001 VMBC
+Unlock Native (MBC): 0.0001 MBC

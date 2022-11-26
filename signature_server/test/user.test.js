@@ -69,4 +69,5 @@ describe("Test login", function(){
     it("Allow login with valid username + password, then return valid JWT", login_process(CorrectUser, true));
     it("Reject login with wrong password", login_process(WrongUser, false));
 
-})
+});
+

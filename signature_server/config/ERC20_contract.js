@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 
 const AddressERC20 = process.env.ERC20_ADDRESS;
 const AbiERC20 = [

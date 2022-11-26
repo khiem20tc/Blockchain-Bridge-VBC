@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 
 const BridgeAddressERC721 = process.env.BRIDGE_ERC721_ADDRESS;
 const BridgeAbiERC721 = [

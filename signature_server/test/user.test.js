@@ -1,5 +1,6 @@
-require('dotenv').config();
+//require('dotenv').config();
 const request = require("supertest");
+const base_crud = require("../repositories/index");
 const {expect} = require("chai");
 const {accounts} = require("../model/index");
 const {validate_token} = require("../services/index");
@@ -11,6 +12,12 @@ before(function (done) {
 })
 
 
+const main_server = "http://localhost:3000";
+const uri = {
+    register: "/user/register",
+    login: "/user/login",
+    validate_token: "/user/validate_token"
+}
 
 
 const CorrectUser = {
@@ -23,6 +30,30 @@ const WrongUser = {
     password: "12345678"
 }
 
+describe("POST register", function(){
+    after(async function(){
+        await accounts.deleteMany({});
+    });
+    it("should register accounts if no previous username", async function(){
+        const res = await request(main_server)
+                .post(uri["register"])
+                .send(CorrectUser)
+                .set('Accept', 'application/json')
+                .expect(201);
+        expect(res.text).to.be.equal("true");
+        const check = await accounts.estimatedDocumentCount(CorrectUser);
+        expect(check).to.be.equal(1);
+    });
+
+    it("should fail if account already exists", async function(){
+        const res = await request(main_server)
+                .post(uri["register"])
+                .send(CorrectUser)
+                .set('Accept', 'application/json')
+                .expect(400);
+        expect(res.text).to.be.equal("false");
+    });
+});
 
 describe("Test login", function(){
     before(async function(){

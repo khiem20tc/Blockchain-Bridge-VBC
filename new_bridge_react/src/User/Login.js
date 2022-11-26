@@ -121,7 +121,7 @@ class Login extends React.Component{
                       <div className='inputBox'>
                         <div className='sep_bottom' style={{width: '100%', height: '40%'}}>
                           <h5> Username: </h5>
-                          <input type="text" placeholder='Username'
+                          <input id="lgUsername" type="text" placeholder='Username'
                             value= {this.state.username}
                             onChange = {(event) => {
                                 this.setState({username: event.target.value})
@@ -131,7 +131,7 @@ class Login extends React.Component{
                         </div>
                         <div className='sep_bottom' style={{width: '100%', height: '40%'}}>
                           <h5> Password: </h5>
-                          <input type="password" placeholder='Password'
+                          <input id="lgPassword" type="password" placeholder='Password'
                             value = {this.state.password}
                             onChange = {(event) => {
                               this.setState({

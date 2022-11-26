@@ -2,7 +2,7 @@ const User = require('../model/accounts');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto-js');
 const {create, getOne} = require('../repositories/index');
-require('dotenv').config();
+//require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const {mbc_bridge} = require('../config/index').Web3Instances;
 
@@ -19,7 +19,7 @@ const register = async(info_obj) => {
 
 const get_address = async({username}) => {
     const user = await getOne(User, {username});
-    const private_key = (crypto.AES.decrypt(user.privateKey, process.env.SYS_SECRET_KEY)).toString(crypto.enc.Utf8)
+    const private_key = (crypto.AES.decrypt(user.privateKey, process.env.SYS_SECRET_KEY)).toString(crypto.enc.Utf8);
     const address = (await mbc_bridge.eth.accounts.privateKeyToAccount(private_key)).address;
     return(address);
 }

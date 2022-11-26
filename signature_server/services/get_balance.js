@@ -1,5 +1,5 @@
 const index = require('../config/index');
-require('dotenv').config();
+//require('dotenv').config();
 
 async function checkBridge(bridge_name){
     let user_contract;

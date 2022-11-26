@@ -1,5 +1,5 @@
 //Updated to V3
-require('dotenv').config();
+//require('dotenv').config();
 
 const BridgeAddressERC20 = process.env.BRIDGE_ERC20_ADDRESS;
 const BridgeAbiERC20 = [

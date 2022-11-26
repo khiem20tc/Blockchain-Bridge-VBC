@@ -1,12 +1,13 @@
-require("dotenv").config();
+//require('dotenv').config();
 const mongoose = require('mongoose');
 //Move uri to .env after finished
 let uri;
-if (process.env.NODE_ENV == "testing"){
-    uri = process.env.MONGO_URI_TEST
+if (process.env.NODE_ENV === "testing"){
+    uri = process.env.MONGO_URI_TEST;
 } else {
     uri = process.env.MONGO_URI;
 }
+
 
 
 try {

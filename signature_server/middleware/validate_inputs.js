@@ -1,4 +1,4 @@
-require("dotenv").config();
+//require('dotenv').config();
 const Logger = require('../utils/logger');
 
 const validate_input = (Schema) => async(req, res, next) => {
@@ -9,8 +9,8 @@ const validate_input = (Schema) => async(req, res, next) => {
         }
         next()
     } catch(e) {
-        if (process.env.NODE_ENV != "testing"){
-            Logger.error(e);;
+        if (process.env.NODE_ENV !== "testing"){
+            Logger.error(e);
         }
         res.status(400).send(false);
     }

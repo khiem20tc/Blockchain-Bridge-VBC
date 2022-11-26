@@ -736,6 +736,7 @@ class Main extends React.Component{
                       <p> Max Approved: N/A </p>
                       <div className='small_div newArrow center'>
                         <select 
+                          id="fromNetwork"
                           value={this.state.from_network}
                           onChange={(event) => {
                             this.setState({from_network: event.target.value});

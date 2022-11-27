@@ -33,8 +33,13 @@ describe('ERC20', function() {
     await driver.findElement(By.id("lgPassword")).click()
     // 8 | type | id=lgPassword | 1234567
     await driver.findElement(By.id("lgPassword")).sendKeys("1234567")
+    
+    await driver.wait(until.elementLocated(By.css(".submit_bar")), 100000)
+    const submit_bar = await driver.findElement(By.css(".submit_bar"));
+    await driver.executeScript("arguments[0].scrollIntoView()", submit_bar);
+    await driver.wait(until.elementIsVisible(submit_bar), 100000);
     // 9 | click | css=.submit_bar | 
-    await driver.findElement(By.css(".submit_bar")).click()
+    await driver.executeScript("arguments[0].click()", submit_bar);
 
     await driver.wait(until.elementLocated(By.id("receiverAddress")), 100000)
     // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
@@ -47,24 +52,35 @@ describe('ERC20', function() {
     await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
     // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
     await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const element = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView(true);", element);
-    await driver.wait(until.elementIsVisible(element), 100000);
+    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
+    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
+    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
 
-    await driver.findElement(By.id("fromNetwork")).click()
+    await driver.executeScript("arguments[0].click()", fromNetwork);
     // 15 | click | css=.inputBox > .sep_bottom:nth-child(1) > p:nth-child(1) | 
     await driver.findElement(By.css(".inputBox > .sep_bottom:nth-child(1) > p:nth-child(1)")).click()
     // 16 | click | id=senderAddress | 
-    await driver.findElement(By.id("senderAddress")).click()
+
+    await driver.wait(until.elementLocated(By.id("senderAddress")), 100000)
+    const senderAddress = await driver.findElement(By.id("senderAddress"));
+    await driver.executeScript("arguments[0].scrollIntoView()", senderAddress);
+    await driver.wait(until.elementIsVisible(senderAddress), 100000);
+
+    await driver.executeScript("arguments[0].click()", senderAddress);
     // 17 | type | id=senderAddress | 0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8
     await driver.findElement(By.id("senderAddress")).sendKeys("0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8")
     // 18 | click | id=receiverAddress | 
-    await driver.findElement(By.id("receiverAddress")).click()
+    const receiverAddress = await driver.findElement(By.id("receiverAddress"));
+    await driver.executeScript("arguments[0].click()", receiverAddress);
     // 19 | type | id=receiverAddress | 0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8
     await driver.findElement(By.id("receiverAddress")).sendKeys("0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8")
     // 20 | click | css=.submit_bar | 
-    await driver.findElement(By.css(".submit_bar")).click()
+    const final_submit = await driver.findElement(By.css(".submit_bar"));
+    await driver.executeScript("arguments[0].click()", final_submit);
     // 21 | assertText | id=btnStatus | Success!
+    await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
+    await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000)
+    console.log(await driver.findElement(By.id("btnStatus")).getText());
     assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
     {

@@ -56,9 +56,15 @@ const Web3 =  require('web3');
 // const new_web3 = new web3();
 
 // let {mbc_bridge, agd_bridge} = new_web3.set_bridges();
+let web3_mbc;
+let web3_agd;
 
-const web3_mbc = new Web3(new Web3.providers.HttpProvider(process.env.MBC_LINK))
-const web3_agd = new Web3(new Web3.providers.HttpProvider(process.env.AGD_LINK))
+try{
+    web3_mbc = new Web3(new Web3.providers.HttpProvider(process.env.MBC_LINK))
+    web3_agd = new Web3(new Web3.providers.HttpProvider(process.env.AGD_LINK))
+} catch(e) {
+    console.log(e);
+}
 
 module.exports =  {
     mbc_bridge: web3_mbc,

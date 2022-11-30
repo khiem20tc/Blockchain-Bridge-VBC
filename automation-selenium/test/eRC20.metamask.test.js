@@ -2,6 +2,7 @@
 const { Builder, By, Key, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
+const {LockERC20, LockNative, UnlockERC20, UnlockNative} = require('./common');
 
 
 const metamask_path = "C:/Users/admin/AppData/Local/Google/Chrome/User Data/Profile 3/Extensions/nkbihfbeogaeaoehlefnkodbefgpgknn/10.22.2_0.crx";
@@ -33,8 +34,10 @@ let WaitAndClick = async(driver, method, locator) => {
 }
 
 let WaitAndSelect = async(driver, method_select, locator_select, method_opt, locator_opt) => {
+  await driver.wait(until.elementLocated(By[method_select](locator_select)), 15000);
   let select_element = await driver.findElement(By[method_select](locator_select));
   await select_element.click();
+  await driver.wait(until.elementLocated(By[method_opt](locator_opt)), 15000);
   await driver.wait(until.elementIsEnabled(await select_element.findElement(By[method_opt](locator_opt))), 25000);
   await select_element.findElement(By[method_opt](locator_opt)).click();
 }
@@ -46,6 +49,40 @@ let AddNetworkInfo = async(driver, arr) => {
   }
   await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//button[text() = 'Save']"))), 25000);
   await driver.findElement(By.xpath("//button[text() = 'Save']")).click();
+}
+
+let ConnectMetamask = async(driver, handle) => {
+  await driver.switchTo().window(handle[0]);
+  await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
+  await WaitAndClick(driver, 'xpath', "//button[text() = 'Next']");
+  await WaitAndClick(driver, 'xpath', "//button[text() = 'Connect']");
+  await driver.wait(until.elementLocated(By.xpath("//div[@class='icon-button__circle']")));
+  await driver.switchTo().window(handle[1]);
+}
+
+let SwitchNetwork = async(driver, handle, network) => {
+  await driver.switchTo().window(handle[0]);
+  await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/home.html#");
+  await WaitAndSelect(driver, 'xpath', '//div[@data-testid="network-display"]', 'xpath', "//span[text() = '" + network + "']"); 
+  await driver.switchTo().window(handle[1]);
+}
+
+let ConfirmMetamask = async(driver, handle) => {
+  await driver.switchTo().window(handle[0]);
+  let flag = false;
+  let count = 0;
+  while (flag == false && count < 6){
+    try{
+      await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
+      await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 3000);
+      flag = true;
+    } catch(e){
+      count += 1
+    }
+  }
+  await WaitAndClick(driver, 'xpath', "//button[text() = 'Confirm']");
+  await driver.switchTo().window(handle[1]);
+  console.log('ONE');
 }
 
 
@@ -112,64 +149,19 @@ describe('ERC20', function() {
   after(async function() {
     await driver.quit();
   })
-  it('Lock Native token 1st time', async function() {
-    try{
-    // Test name: Lock Native token 1st time
-    // Step # | name | target | value
-    // 1 | open | http://localhost:3006/login | 
-    await driver.get("http://localhost:3006/")
-    
+  // it('Lock Native token 1st time', async function() {
+  //   await LockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask);
+  // })
 
-    await driver.wait(until.elementLocated(By.id("receiverAddress")), 100000)
-    // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(3) > .large_input_transparent")).click()
-    // 11 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent")).click()
-    // 12 | click | id=amountEther | 
-    await driver.findElement(By.id("amountEther")).click()
-    // 13 | type | id=amountEther | 0.00001
-    await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
-    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
-    await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
-    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
+  // it('Unlock ERC20 token 1st time', async function() {
+  //   await UnlockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
+  // })
 
-    await driver.executeScript("arguments[0].click()", fromNetwork);
-    // 15 | click | css=.inputBox > .sep_bottom:nth-child(1) > p:nth-child(1) | 
-    await driver.findElement(By.css(".inputBox > .sep_bottom:nth-child(1) > p:nth-child(1)")).click()
-    // 16 | click | id=senderAddress | 
-
-    await driver.wait(until.elementLocated(By.id("senderAddress")), 100000)
-    const senderAddress = await driver.findElement(By.id("senderAddress"));
-    await driver.executeScript("arguments[0].scrollIntoView()", senderAddress);
-    await driver.wait(until.elementIsVisible(senderAddress), 100000);
-
-    await driver.executeScript("arguments[0].click()", senderAddress);
-    // 17 | type | id=senderAddress | 0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3
-    await driver.findElement(By.id("senderAddress")).sendKeys("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3")
-    // 18 | click | id=receiverAddress | 
-    const receiverAddress = await driver.findElement(By.id("receiverAddress"));
-    await driver.executeScript("arguments[0].click()", receiverAddress);
-    // 19 | type | id=receiverAddress | 0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3
-    await driver.findElement(By.id("receiverAddress")).sendKeys("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3")
-    // 20 | click | css=.submit_bar | 
-    const final_submit = await driver.findElement(By.css(".submit_bar"));
-    await driver.executeScript("arguments[0].click()", final_submit);
-
-    //Switch to Metamask page to Confirm
-
-    // 21 | assertText | id=btnStatus | Success!
-    await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
-    await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000)
-    console.log(await driver.findElement(By.id("btnStatus")).getText());
-    assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
-    // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
-    {
-      const elements = await driver.findElements(By.css(".center:nth-child(8) > p"))
-      assert(elements.length)
-    }} catch(e){
-      console.log(e)
-    }
+  it('Lock ERC20 token 1st time', async function() {
+    await LockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "AGD");
   })
+
+  // it('Unlock Native token 1st time', async function() {
+  //   await UnlockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC");
+  // })
 })

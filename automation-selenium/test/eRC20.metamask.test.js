@@ -71,18 +71,21 @@ let ConfirmMetamask = async(driver, handle) => {
   await driver.switchTo().window(handle[0]);
   let flag = false;
   let count = 0;
-  while (flag == false && count < 6){
+  while (flag === false && count < 6){
     try{
       await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
       await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 3000);
+      await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//button[text() = 'Confirm']"))), 3000);
       flag = true;
     } catch(e){
-      count += 1
+      count = count + 1
     }
   }
   await WaitAndClick(driver, 'xpath', "//button[text() = 'Confirm']");
+  try {
+    await driver.wait(until.elementLocated(By.css("Null, set just for implicit wait")), 3000);
+  } catch(e){}
   await driver.switchTo().window(handle[1]);
-  console.log('ONE');
 }
 
 
@@ -149,19 +152,19 @@ describe('ERC20', function() {
   after(async function() {
     await driver.quit();
   })
-  // it('Lock Native token 1st time', async function() {
-  //   await LockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask);
-  // })
-
-  // it('Unlock ERC20 token 1st time', async function() {
-  //   await UnlockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
-  // })
-
-  it('Lock ERC20 token 1st time', async function() {
-    await LockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "AGD");
+  it('Lock Native token 1st time', async function() {
+    await LockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask);
   })
 
-  // it('Unlock Native token 1st time', async function() {
-  //   await UnlockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC");
-  // })
+  it('Unlock ERC20 token 1st time', async function() {
+    await UnlockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
+  })
+
+  it('Lock ERC20 token 1st time', async function() {
+    await LockERC20("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
+  })
+
+  it('Unlock Native token 1st time', async function() {
+    await UnlockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC");
+  })
 })

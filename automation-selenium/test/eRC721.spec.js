@@ -31,7 +31,7 @@ let Login = async(driver) => {
     await driver.executeScript("arguments[0].click()", submit_bar);
 }
 
-describe('ERC20', function() {
+describe('ERC721', function() {
   this.timeout(100000)
   let driver
   let vars
@@ -42,19 +42,20 @@ describe('ERC20', function() {
   after(async function() {
     await driver.quit();
   })
-  it('Lock Native token 1st time', async function() {
-    await LockNative("0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login);
+  //token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id
+  it('Lock ERC721 token 1st time', async function() {
+    await LockToken("ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC", "70");
   })
 
-  it('Unlock ERC20 1st time', async function() {
-    await UnlockToken("ERC20", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "AGD");
+  it('Unlock ERC721 1st time', async function() {
+    await UnlockToken("ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "AGD", "70");
   })
 
-  it('Lock ERC20 1st time', async function() {
-    await LockToken("ERC20", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "AGD");
+  it('Lock ERC721 1st time from other side', async function() {
+    await LockToken("ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "AGD", "70");
   })
   
-  it('Unlock Native token 1st time', async function() {
-    await UnlockNative("0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login);
+  it('Unlock ERC721 token 1st time from other side', async function() {
+    await UnlockToken("ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC",  "70");
   })
 })

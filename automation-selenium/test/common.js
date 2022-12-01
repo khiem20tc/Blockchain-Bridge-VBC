@@ -7,10 +7,12 @@ let WaitAndClick = async(driver, method, locator) => {
     await driver.findElement(By[method](locator)).click();
   }
   
-  let WaitAndSelect = async(driver, method_select, locator_select, method_opt, locator_opt) => {
+let WaitAndSelect = async(driver, method_select, locator_select, method_opt, locator_opt) => {
     await driver.wait(until.elementLocated(By[method_select](locator_select)), 15000);
     let select_element = await driver.findElement(By[method_select](locator_select));
-    await select_element.click();
+    await driver.executeScript("arguments[0].scrollIntoView()", select_element);
+    await driver.wait(until.elementIsVisible(await driver.findElement(By[method_select](locator_select))), 5000);
+    await driver.executeScript("arguments[0].click()", select_element);
     await driver.wait(until.elementIsEnabled(await select_element.findElement(By[method_opt](locator_opt))), 25000);
     await select_element.findElement(By[method_opt](locator_opt)).click();
   }
@@ -83,10 +85,15 @@ let LockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectM
     }
 }
 
-let UnlockERC20 = async(address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network) => {
+let UnlockToken = async(token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Unlock ERC20 1st time
     // Step # | name | target | value
     // 1 | open | http://localhost:3006/login | 
+    let from_network = "AGD";
+    if (network == "AGD"){
+        from_network = "MBC"
+    }
+    
     await driver.get("http://localhost:3006");
 
     if (Login){
@@ -102,37 +109,28 @@ let UnlockERC20 = async(address, driver, handle, Login, ConfirmMetamask, Connect
     }
     
     // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-    await WaitAndClick(driver, "css", ".large_div:nth-child(3) > .large_input_transparent");
-    // 11 | select | css=.large_div:nth-child(3) > .large_input_transparent | label=VMBC
-    {
-      const dropdown = await driver.findElement(By.css(".large_div:nth-child(3) > .large_input_transparent"));
-      await driver.wait(until.elementIsEnabled(await dropdown.findElement(By.xpath("//option[@value = 'VMBC']"))), 10000);
-      await dropdown.findElement(By.xpath("//option[@value = 'VMBC']")).click();
+    if (token == "ERC20"){
+        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'VMBC']");
+        // 14 | click | id=amountEther | 
+        await driver.findElement(By.id("amountEther")).click()
+        // 15 | type | id=amountEther | 0.00001
+        await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
+    } else {
+        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
+        // 14 | click | id=amountEther | 
+        await WaitAndClick(driver, "id", "tokenId");
+        // 15 | type | id=amountEther | 0.00001
+        await driver.findElement(By.id("tokenId")).sendKeys(id)
     }
-    // 12 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent")).click()
-    // 13 | select | css=.large_div:nth-child(2) > .large_input_transparent | label=Draw
-    {
-      const dropdown = await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent"))
-      await driver.wait(until.elementIsEnabled(await dropdown.findElement(By.xpath("//option[@value = 'Draw']"))), 10000);
-      await dropdown.findElement(By.xpath("//option[@value = 'Draw']")).click()
-    }
+    
+    await WaitAndSelect(driver, "css", ".large_div:nth-child(2) > .large_input_transparent", "xpath", "//option[@value = 'Draw']");
 
 
-    // 14 | click | id=amountEther | 
-    await driver.findElement(By.id("amountEther")).click()
-    // 15 | type | id=amountEther | 0.00001
-    await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
-    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
-    await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
-    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
-
-    await driver.executeScript("arguments[0].click()", fromNetwork);
-    // 15 | click | css=.inputBox > .sep_bottom:nth-child(1) > p:nth-child(1) | 
-    await driver.findElement(By.css(".inputBox > .sep_bottom:nth-child(1) > p:nth-child(1)")).click()
-    // 16 | click | id=senderAddress | 
+    
+    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent |    
+    await WaitAndSelect(driver, "id", "fromNetwork", "xpath", "//option[@value = '" + from_network + "']");
+   
+    // 15 | click | id=senderAddress | 
 
     await driver.wait(until.elementLocated(By.id("senderAddress")), 100000)
     const senderAddress = await driver.findElement(By.id("senderAddress"));
@@ -165,7 +163,7 @@ let UnlockERC20 = async(address, driver, handle, Login, ConfirmMetamask, Connect
     }
 }
 
-let LockERC20 = async(address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network) => {
+let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Lock ERC20 1st time
     // Step # | name | target | value
     await driver.get("http://localhost:3006");
@@ -182,16 +180,28 @@ let LockERC20 = async(address, driver, handle, Login, ConfirmMetamask, ConnectMe
         await SwitchNetwork(driver, handle, network);
     }
 
-    await driver.wait(until.elementLocated(By.id("receiverAddress")), 100000)
-    // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-    await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'VMBC']");
-    // 11 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent")).click()
+    await driver.wait(until.elementLocated(By.id("receiverAddress")), 100000);
+
     await WaitAndSelect(driver, 'css', ".large_div:nth-child(2) > .large_input_transparent", "xpath", "//option[@value = 'Deposit']");
-    // 12 | click | id=amountEther | 
-    await driver.findElement(By.id("amountEther")).click()
-    // 13 | type | id=amountEther | 0.00001
-    await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
+    if(token == "ERC20"){
+        // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
+        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'VMBC']");
+        
+        // 12 | click | id=amountEther | 
+        await driver.findElement(By.id("amountEther")).click()
+        // 13 | type | id=amountEther | 0.00001
+        await driver.findElement(By.id("amountEther")).sendKeys("0.00001");
+    } else {
+        // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
+        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
+        // 12 | click | 
+        await driver.findElement(By.id("tokenId")).click()
+        // 13 | type | 
+        await driver.findElement(By.id("tokenId")).sendKeys(id);
+    }
+    
+
+
     // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
     await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
     const fromNetwork = await driver.findElement(By.id("fromNetwork"));
@@ -199,8 +209,8 @@ let LockERC20 = async(address, driver, handle, Login, ConfirmMetamask, ConnectMe
     await driver.wait(until.elementIsVisible(fromNetwork), 100000);
 
     await driver.executeScript("arguments[0].click()", fromNetwork);
-    await driver.wait(until.elementIsEnabled(await fromNetwork.findElement(By.xpath("//option[@value = 'AGD']"))), 10000);
-    await fromNetwork.findElement(By.xpath("//option[@value = 'AGD']")).click();
+    await driver.wait(until.elementIsEnabled(await fromNetwork.findElement(By.xpath("//option[@value = '"+ network +"']"))), 10000);
+    await fromNetwork.findElement(By.xpath("//option[@value = '"+ network +"']")).click();
     
     // 16 | click | id=senderAddress | 
 
@@ -316,8 +326,8 @@ let UnlockNative = async(address, driver, handle, Login, ConfirmMetamask, Connec
 }
 
 module.exports = {
-    LockERC20,
+    LockToken,
     LockNative,
-    UnlockERC20,
+    UnlockToken,
     UnlockNative
 }

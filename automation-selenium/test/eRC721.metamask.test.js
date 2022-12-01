@@ -77,11 +77,11 @@ let ConfirmMetamask = async(driver, handle) => {
       await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 3000);
       await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//button[text() = 'Confirm']"))), 3000);
       flag = true;
+      await WaitAndClick(driver, 'xpath', "//button[text() = 'Confirm']");
     } catch(e){
       count = count + 1
     }
   }
-  await WaitAndClick(driver, 'xpath', "//button[text() = 'Confirm']");
   try {
     await driver.wait(until.elementLocated(By.css("Null, set just for implicit wait")), 3000);
   } catch(e){}
@@ -152,19 +152,21 @@ describe('ERC20', function() {
   after(async function() {
     await driver.quit();
   })
-  it('Lock Native token 1st time', async function() {
-    await LockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask);
+
+    //token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id
+  it('Lock ERC721 token 1st time', async function() {
+    await LockToken("ERC721", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "MBC", "75");
   })
 
-  it('Unlock ERC20 token 1st time', async function() {
-    await UnlockToken("ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
+  it('Unlock ERC721 1st time', async function() {
+    await UnlockToken("ERC721", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "75");
   })
 
-  it('Lock ERC20 token 1st time', async function() {
-    await LockToken("ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD");
+  it('Lock ERC721 1st time from other side', async function() {
+    await LockToken("ERC721", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "75");
   })
-
-  it('Unlock Native token 1st time', async function() {
-    await UnlockNative("0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC");
+  
+  it('Unlock ERC721 token 1st time from other side', async function() {
+    await UnlockToken("ERC721", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "75");
   })
 })

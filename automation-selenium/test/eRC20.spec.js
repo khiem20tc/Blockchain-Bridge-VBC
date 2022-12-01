@@ -11,7 +11,8 @@ let Login = async(driver) => {
     // 2 | runScript | window.localStorage.clear() | 
     await driver.executeScript("window.localStorage.clear()")
     // 3 | waitForElementEditable | id=lgUsername | 30000
-    await driver.wait(until.elementIsEnabled(await driver.findElement(By.id("lgUsername"))), 100000)
+    await driver.wait(until.elementLocated(By.id("lgUsername")), 25000)
+    await driver.wait(until.elementIsEnabled(await driver.findElement(By.id("lgUsername"))), 25000)
     // 4 | setWindowSize | 1070x824 | 
     await driver.manage().window().maximize()
     // 5 | click | id=lgUsername | 

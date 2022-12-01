@@ -305,7 +305,7 @@ class Main extends React.Component{
 
   //FROM
   FE_ERC721_lockMulti = async(web3, user_contract, bridge_contract, signature) => {
-    await user_contract.methods.setApprovalForAll(ERC20_BridgeAddress, true).send({from: this.state.sender_address, gas: '8000000'});
+    await user_contract.methods.setApprovalForAll(ERC721_BridgeAddress, true).send({from: this.state.sender_address, gas: '8000000'});
     const receipt = await bridge_contract.methods
                   .lock_multiples(this.state.token_ids_arr, ERC721_UserAddress, this.state.receiver_address)
                   .send({from: this.state.sender_address, gas: '8000000'});

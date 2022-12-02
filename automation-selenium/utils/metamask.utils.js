@@ -26,24 +26,32 @@ let SwitchNetwork = async(driver, handle, network) => {
   await driver.switchTo().window(handle[1]);
 }
 
-let ConfirmMetamask = async(driver, handle) => {
+let ConfirmMetamask = async(driver, handle, num_confirm) => {
   await driver.switchTo().window(handle[0]);
-  let flag = false;
-  let count = 0;
-  while (flag === false && count < 4){
-    try{
-      await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
-      await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 3000);
-      await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//button[text() = 'Confirm']"))), 3000);
-      flag = true;
-      await WaitAndClick(driver, 'xpath', "//button[text() = 'Confirm']");
-    } catch(e){
-      count = count + 1
+  for (let i = 0; i < num_confirm; i ++){
+    let flag = false;
+    let count = 0;
+    while (flag === false && count < 4){
+      try{
+        await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
+        await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 2500);
+        await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//button[text() = 'Confirm']"))), 1000);
+        flag = true;
+      } catch(e){
+        count = count + 1
+      }
     }
+    try {
+      await driver.findElement(By.xpath("//button[text() = 'Confirm']")).click();
+    } catch(e){
+      try {
+        await driver.findElement(By.xpath("//button[text() = 'Reject']")).click()
+      } catch(e){ }
+    }
+    try {
+      await driver.wait(until.elementLocated(By.css("Null, set just for implicit wait")), 1000);
+    } catch(e){}
   }
-  try {
-    await driver.wait(until.elementLocated(By.css("Null, set just for implicit wait")), 3000);
-  } catch(e){}
   await driver.switchTo().window(handle[1]);
 }
 
@@ -73,8 +81,11 @@ let RegisterMetamask = async(driver, handle) => {
     confirm.sendKeys("khangluong26052oo412");
     await driver.findElement(By.id('create-new-vault__terms-checkbox')).click();
     const import_btn = await driver.findElement(By.xpath('//button[text()="Import"]'));
-    await driver.wait(until.elementIsEnabled(import_btn), 20000);
+    await driver.wait(until.elementIsEnabled(import_btn), 15000);
     await import_btn.click();
+    try {
+      await driver.wait(until.elementLocated(By.css("Null, set just for implicit wait")), 20000);
+    } catch(e){}
     await WaitAndClick(driver, 'xpath', '//button[text()="All done"]');
   
     await WaitAndClick(driver, "className", "box box--margin-top-1 box--margin-bottom-1 box--flex-direction-row typography chip__label typography--h7 typography--weight-normal typography--style-normal typography--color-text-alternative");

@@ -43,24 +43,24 @@ describe('ERC20', function() {
   //expect, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id
 
   it('Abnormal: Lock Native token 1st time for wrong address', async function() {
-    await LockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "MBC", "0.00001");
+    await LockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "MBC", "0.00001", 0);
   })
 
   it('Abnormal: Lock Native token 1st time for wrong amount', async function() {
-    await LockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "MBC", "1");
+    await LockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "100", 1);
   })
   
 
   it('Normal: Lock Native token 1st time', async function() {
-    await LockNative("Success!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, ConnectMetamask, SwitchNetwork, "MBC", "0.00001");
+    await LockNative("Success!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "0.00001");
   })
 
   it('Abnormal: Unlock ERC20 token 1st time wrong address', async function() {
-    await UnlockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "0.00001");
+    await UnlockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "0.00001", 0);
   })
 
   it('Abnormal: Unlock ERC20 token 1st time wrong amount', async function() {
-    await UnlockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "1");
+    await UnlockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "100", 0);
   })
 
   it('Normal: Unlock ERC20 token 1st time', async function() {
@@ -68,11 +68,11 @@ describe('ERC20', function() {
   })
 
   it('Abnormal: Lock ERC20 token 1st time wrong address', async function() {
-    await LockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "0.00001");
+    await LockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "0.00001", 0);
   })
 
   it('Abnormal: Lock ERC20 token 1st time wrong amount', async function() {
-    await LockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "1");
+    await LockToken("Error!", "ERC20", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "AGD", "100", 2);
   })
 
   it('Normal: Lock ERC20 token 1st time', async function() {
@@ -80,11 +80,11 @@ describe('ERC20', function() {
   })
 
   it('Abnormal: Unlock Native token 1st time wrong address', async function() {
-    await UnlockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "0.00001");
+    await UnlockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc4", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "0.00001", 0);
   })
 
   it('Abnormal: Unlock Native token 1st time wrong amount', async function() {
-    await UnlockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "1");
+    await UnlockNative("Error!", "0x00F83Bf923DD1e044a23C9FF1c14f54cf0f3ffc3", driver, handle, null, ConfirmMetamask, null, SwitchNetwork, "MBC", "100", 0);
   })
 
   it('Normal: Unlock Native token 1st time', async function() {

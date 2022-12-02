@@ -31,7 +31,7 @@ let ConfirmMetamask = async(driver, handle, num_confirm) => {
   for (let i = 0; i < num_confirm; i ++){
     let flag = false;
     let count = 0;
-    while (flag === false && count < 4){
+    while (flag === false && count < 5){
       try{
         await driver.get("chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/popup.html#");
         await driver.wait(until.elementLocated(By.xpath("//button[text() = 'Confirm']")), 2500);

@@ -56,7 +56,7 @@ let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, 
         await ConfirmMetamask(driver, handle, num_confirm);
     }
     // 21 | assertText | id=btnStatus | Success!
-    await driver.wait(until.elementLocated(By.id("btnStatus")), 15000);
+    await driver.wait(until.elementLocated(By.id("btnStatus")), 20000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 2000);
     assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
@@ -134,8 +134,8 @@ let UnlockToken = async(expect, token, address, driver, handle, Login, ConfirmMe
         await ConfirmMetamask(driver, handle, num_confirm);        
     } 
         // 21 | assertText | id=btnStatus | Success!
-        await driver.wait(until.elementLocated(By.id("btnStatus")), 10000);
-        await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 10000)
+        await driver.wait(until.elementLocated(By.id("btnStatus")), 20000);
+        await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 2000)
         assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     
 }
@@ -204,7 +204,7 @@ let LockToken = async(expect, token, address, driver, handle, Login, ConfirmMeta
         await ConfirmMetamask(driver, handle, num_confirm);        
     } 
         // 21 | assertText | id=btnStatus | Success!
-        await driver.wait(until.elementLocated(By.id("btnStatus")), 15000);
+        await driver.wait(until.elementLocated(By.id("btnStatus")), 20000);
         await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 2000)
         assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     
@@ -236,13 +236,7 @@ let UnlockNative = async(expect, address, driver, handle, Login, ConfirmMetamask
     // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
     await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'MBC']");
     // 12 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent")).click()
-    // 13 | select | css=.large_div:nth-child(2) > .large_input_transparent | label=Draw
-    {
-      const dropdown = await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent"))
-      await driver.wait(until.elementIsEnabled(await dropdown.findElement(By.xpath("//option[@value = 'Draw']"))), 10000);
-      await dropdown.findElement(By.xpath("//option[@value = 'Draw']")).click()
-    }
+    await WaitAndSelect(driver, "css", ".large_div:nth-child(2) > .large_input_transparent", "xpath", "//option[@value = 'Draw']");
 
 
     // 14 | click | id=amountEther | 
@@ -279,7 +273,7 @@ let UnlockNative = async(expect, address, driver, handle, Login, ConfirmMetamask
         await ConfirmMetamask(driver, handle, num_confirm);
     }
     // 21 | assertText | id=btnStatus | Success!
-    await driver.wait(until.elementLocated(By.id("btnStatus")), 15000);
+    await driver.wait(until.elementLocated(By.id("btnStatus")), 20000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 2000);
     assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 

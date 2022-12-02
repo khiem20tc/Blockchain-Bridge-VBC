@@ -26,7 +26,7 @@ opts.addExtensions(metamask_path);
 
 
 
-describe('ERC20', function() {
+describe('ERC721', function() {
   this.timeout(100000)
   let handle
   let driver

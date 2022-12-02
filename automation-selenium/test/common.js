@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 const {WaitAndClick, WaitAndSelect} = require('../utils/index');
 
-let LockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network) => {
+let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Lock Native token 1st time
     // Step # | name | target | value
     await driver.get("http://localhost:3006");
@@ -28,16 +28,11 @@ let LockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectM
     // 12 | click | id=amountEther | 
     await driver.findElement(By.id("amountEther")).click()
     // 13 | type | id=amountEther | 0.00001
-    await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
+    await driver.findElement(By.id("amountEther")).sendKeys(id)
     // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
-    await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
-    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
-
-    await driver.executeScript("arguments[0].click()", fromNetwork);
-    // 15 | click | css=.inputBox > .sep_bottom:nth-child(1) > p:nth-child(1) | 
-    await driver.findElement(By.css(".inputBox > .sep_bottom:nth-child(1) > p:nth-child(1)")).click()
+    await WaitAndSelect(driver, "id", "fromNetwork", "xpath", "//option[@value = '"+ network +"']")
+    
+    
     // 16 | click | id=senderAddress | 
 
     await driver.wait(until.elementLocated(By.id("senderAddress")), 100000)
@@ -63,7 +58,7 @@ let LockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectM
     // 21 | assertText | id=btnStatus | Success!
     await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000);
-    assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
+    assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
     {
       const elements = await driver.findElements(By.css(".center:nth-child(8) > p"))
@@ -71,7 +66,7 @@ let LockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectM
     }
 }
 
-let UnlockToken = async(token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
+let UnlockToken = async(expect, token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Unlock ERC20 1st time
     // Step # | name | target | value
     // 1 | open | http://localhost:3006/login | 
@@ -100,7 +95,7 @@ let UnlockToken = async(token, address, driver, handle, Login, ConfirmMetamask, 
         // 14 | click | id=amountEther | 
         await driver.findElement(By.id("amountEther")).click()
         // 15 | type | id=amountEther | 0.00001
-        await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
+        await driver.findElement(By.id("amountEther")).sendKeys(id)
     } else {
         await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
         // 14 | click | id=amountEther | 
@@ -141,7 +136,7 @@ let UnlockToken = async(token, address, driver, handle, Login, ConfirmMetamask, 
     // 21 | assertText | id=btnStatus | Success!
     await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000)
-    assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
+    assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
     {
       const elements = await driver.findElements(By.css(".center:nth-child(8) > p"))
@@ -149,7 +144,7 @@ let UnlockToken = async(token, address, driver, handle, Login, ConfirmMetamask, 
     }
 }
 
-let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
+let LockToken = async(expect, token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Lock ERC20 1st time
     // Step # | name | target | value
     await driver.get("http://localhost:3006");
@@ -176,7 +171,7 @@ let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, Co
         // 12 | click | id=amountEther | 
         await driver.findElement(By.id("amountEther")).click()
         // 13 | type | id=amountEther | 0.00001
-        await driver.findElement(By.id("amountEther")).sendKeys("0.00001");
+        await driver.findElement(By.id("amountEther")).sendKeys(id);
     } else {
         // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
         await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
@@ -188,16 +183,8 @@ let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, Co
     
 
 
-    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
-    await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
-    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
-
-    await driver.executeScript("arguments[0].click()", fromNetwork);
-    await driver.wait(until.elementIsEnabled(await fromNetwork.findElement(By.xpath("//option[@value = '"+ network +"']"))), 10000);
-    await fromNetwork.findElement(By.xpath("//option[@value = '"+ network +"']")).click();
-    
+    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent |   
+    await WaitAndSelect(driver, "id", "fromNetwork", "xpath", "//option[@value = '"+ network +"']")
     // 16 | click | id=senderAddress | 
 
     await driver.wait(until.elementLocated(By.id("senderAddress")), 100000)
@@ -224,7 +211,7 @@ let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, Co
     // 21 | assertText | id=btnStatus | Success!
     await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000)
-    assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
+    assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
     {
       const elements = await driver.findElements(By.css(".center:nth-child(8) > p"))
@@ -232,11 +219,15 @@ let LockToken = async(token, address, driver, handle, Login, ConfirmMetamask, Co
     }
 }
 
-let UnlockNative = async(address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network) => {
+let UnlockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id) => {
     // Test name: Unlock Native token 1st time
     // Step # | name | target | value
     // 1 | open | http://localhost:3006/login | 
     await driver.get("http://localhost:3006");
+    let from_network = "AGD";
+    if (network == "AGD"){
+        from_network = "MBC"
+    }
 
     if (Login){
         await Login(driver);
@@ -265,16 +256,11 @@ let UnlockNative = async(address, driver, handle, Login, ConfirmMetamask, Connec
     // 14 | click | id=amountEther | 
     await driver.findElement(By.id("amountEther")).click()
     // 15 | type | id=amountEther | 0.00001
-    await driver.findElement(By.id("amountEther")).sendKeys("0.00001")
-    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
-    await driver.wait(until.elementLocated(By.id("fromNetwork")), 100000);
-    const fromNetwork = await driver.findElement(By.id("fromNetwork"));
-    await driver.executeScript("arguments[0].scrollIntoView()", fromNetwork);
-    await driver.wait(until.elementIsVisible(fromNetwork), 100000);
-
-    await driver.executeScript("arguments[0].click()", fromNetwork);
-    await driver.wait(until.elementIsEnabled(await driver.findElement(By.xpath("//option[@value = 'AGD']"))), 25000);
-    await driver.findElement(By.xpath("//option[@value = 'AGD']")).click();
+    await driver.findElement(By.id("amountEther")).sendKeys(id)
+    
+    // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent |    
+    await WaitAndSelect(driver, "id", "fromNetwork", "xpath", "//option[@value = '" + from_network + "']");
+  
 
     
     // 16 | click | id=senderAddress | 
@@ -303,7 +289,7 @@ let UnlockNative = async(address, driver, handle, Login, ConfirmMetamask, Connec
     // 21 | assertText | id=btnStatus | Success!
     await driver.wait(until.elementLocated(By.id("btnStatus")), 100000);
     await driver.wait(until.elementIsVisible(await driver.findElement(By.id("btnStatus"))), 100000);
-    assert(await driver.findElement(By.id("btnStatus")).getText() == "Success!")
+    assert(await driver.findElement(By.id("btnStatus")).getText() == expect)
     // 22 | assertElementPresent | css=.center:nth-child(8) > p | 
     {
       const elements = await driver.findElements(By.css(".center:nth-child(8) > p"))

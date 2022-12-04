@@ -86,7 +86,7 @@ class Main extends React.Component{
 
   ERC20_lockToken = async () => {
     //Processing locked token
-    const response = await axios.post('http://localhost:3000/api/ERC20/lock', {
+    const response = await axios.post('http://localhost:3001/api/ERC20/lock', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.from_network,
       amount: this.state.amount,
@@ -98,7 +98,7 @@ class Main extends React.Component{
 
   ERC20_unlockToken = async() => {   
     //Need admin permission
-    const response = await axios.post('http://localhost:3000/api/ERC20/unlock', {
+    const response = await axios.post('http://localhost:3001/api/ERC20/unlock', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.to_network,
       amount: this.state.amount,
@@ -110,7 +110,7 @@ class Main extends React.Component{
 
   ERC20_receiveNative = async() => {   
     //Lock native
-    const response = await axios.post('http://localhost:3000/api/ERC20/receive_native', {
+    const response = await axios.post('http://localhost:3001/api/ERC20/receive_native', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.from_network,
       amount: this.state.amount,
@@ -122,7 +122,7 @@ class Main extends React.Component{
 
   ERC20_transferNative = async() => {   
     //Unlock native
-    const response = await axios.post('http://localhost:3000/api/ERC20/transfer_native', {
+    const response = await axios.post('http://localhost:3001/api/ERC20/transfer_native', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.to_network,
       amount: this.state.amount,
@@ -134,7 +134,7 @@ class Main extends React.Component{
 
   ERC721_lockMulti = async() => {   
     //Lock ERC721 (Approve at backend)
-    const response = await axios.post('http://localhost:3000/api/ERC721/lock_multi', {
+    const response = await axios.post('http://localhost:3001/api/ERC721/lock_multi', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.from_network,
       tokenIds: this.state.token_ids_arr,
@@ -146,7 +146,7 @@ class Main extends React.Component{
 
   ERC721_unlockMulti = async() => {   
     //Unlock ERC721
-    const response = await axios.post('http://localhost:3000/api/ERC721/unlock_multi', {
+    const response = await axios.post('http://localhost:3001/api/ERC721/unlock_multi', {
       username: localStorage.getItem("username"),
       bridge_name: this.state.to_network,
       tokenIds: this.state.token_ids_arr,
@@ -225,15 +225,15 @@ class Main extends React.Component{
         }
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
-        const from_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+        const from_real_balance = (await axios.post("http://localhost:3001/api/ERC20/getRealBalance", {
           bridge_name: this.state.from_network,
           address: this.state.sender_address
         })).data;
-        const to_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+        const to_real_balance = (await axios.post("http://localhost:3001/api/ERC20/getRealBalance", {
           bridge_name: this.state.to_network,
           address: this.state.receiver_address
         })).data;
-        const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
+        const approved_num = (await axios.post("http://localhost:3001/api/ERC20/getApproved", {
           from: this.state.sender_address,
           to: this.state.receiver_address,
           is_native,
@@ -314,7 +314,7 @@ class Main extends React.Component{
 
   //TO
   FE_ERC721_unlockMulti = async(web3, user_contract, bridge_contract, signature) => {
-    const token_uris_arr = (await axios.post("http://localhost:3000/api/ERC721/get_URIs", {
+    const token_uris_arr = (await axios.post("http://localhost:3001/api/ERC721/get_URIs", {
       bridge_name: this.state.from_network,
       tokenIds: this.state.token_ids_arr
     })).data
@@ -395,7 +395,7 @@ class Main extends React.Component{
 
       
       if(this.state.currency == "ERC721 token"){
-        signature = (await axios.post("http://localhost:3000/api/signature", {
+        signature = (await axios.post("http://localhost:3001/api/signature", {
             from: this.state.sender_address,
             to: this.state.receiver_address,
             to_network: this.state.to_network,
@@ -403,7 +403,7 @@ class Main extends React.Component{
             is_NFT: true
           })).data;
       } else {
-        signature = (await axios.post("http://localhost:3000/api/signature", {
+        signature = (await axios.post("http://localhost:3001/api/signature", {
             from: this.state.sender_address,
             to: this.state.receiver_address,
             to_network: this.state.to_network,
@@ -439,15 +439,15 @@ class Main extends React.Component{
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
-        const from_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+        const from_real_balance = (await axios.post("http://localhost:3001/api/ERC20/getRealBalance", {
           bridge_name: this.state.from_network,
           address: this.state.sender_address
         })).data;
-        const to_real_balance = (await axios.post("http://localhost:3000/api/ERC20/getRealBalance", {
+        const to_real_balance = (await axios.post("http://localhost:3001/api/ERC20/getRealBalance", {
           bridge_name: this.state.to_network,
           address: this.state.receiver_address
         })).data;
-        const approved_num = (await axios.post("http://localhost:3000/api/ERC20/getApproved", {
+        const approved_num = (await axios.post("http://localhost:3001/api/ERC20/getApproved", {
           from: this.state.sender_address,
           to: this.state.receiver_address,
           is_native: is_native,
@@ -487,7 +487,7 @@ class Main extends React.Component{
   //Common Function
 
   getBalance = async (address, bridge_name) => {
-    const balance = (await axios.post('http://localhost:3000/api/ERC20/getBalance', {
+    const balance = (await axios.post('http://localhost:3001/api/ERC20/getBalance', {
       bridge_name,
       address
   })).data.toString();
@@ -603,7 +603,7 @@ class Main extends React.Component{
   getCurrentAddress = async() => {
     let address;
     if (this.state.user == null){
-      address = (await axios.post("http://localhost:3000/user/get_address", {
+      address = (await axios.post("http://localhost:3001/user/get_address", {
         username: localStorage.getItem("username")
       })).data;
       return(address);

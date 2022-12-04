@@ -8,7 +8,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
 
 const BridgeERC20 = artifacts.require("BridgeERC20");
 const ERC20_v2 = artifacts.require("ERC20_v2");
-const test_admin_pk = "433b7aaddddedc342fa3d65897cace8b2d237484a78a00055187aa2ed79b0c6a";
+const test_admin_pk = "ef8d9eb50497fca65dd4e1281cfe08d7cda60d3068d7adb2f7a489d9450d0c5e";
 
 const ERC20_signer = async({from, to, amount, is_native, mbc_key, mbc_contract, accounts}) => {
 

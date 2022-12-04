@@ -20,11 +20,8 @@ let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, 
         await SwitchNetwork(driver, handle, network);
     }
 
-    await driver.wait(until.elementLocated(By.id("receiverAddress")), 15000)
-    // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(3) > .large_input_transparent")).click()
-    // 11 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
-    await driver.findElement(By.css(".large_div:nth-child(2) > .large_input_transparent")).click()
+    await driver.wait(until.elementLocated(By.id("receiverAddress")), 20000)
+    
     // 12 | click | id=amountEther | 
     await driver.findElement(By.id("amountEther")).click()
     // 13 | type | id=amountEther | 0.00001

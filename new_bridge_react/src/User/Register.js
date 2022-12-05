@@ -30,7 +30,7 @@ class Login extends React.Component{
   onSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post('http://localhost:3000/user/register', {
+        const response = await axios.post('http://localhost:3001/user/register', {
         username: this.state.username,
         password: this.state.password,
         });

@@ -12,7 +12,7 @@ before(function (done) {
 })
 
 
-const main_server = "http://localhost:3000";
+const main_server = "http://localhost:3001";
 const uri = {
     register: "/user/register",
     login: "/user/login",
@@ -57,7 +57,7 @@ describe("POST register", function(){
 
 describe("Test login", function(){
     before(async function(){
-        await request("http://localhost:3000")
+        await request("http://localhost:3001")
         .post("/user/register")
         .send(CorrectUser)
         .expect(201);
@@ -72,7 +72,7 @@ describe("Test login", function(){
         } else {
             number = 400
         }
-        const response = (await request("http://localhost:3000")
+        const response = (await request("http://localhost:3001")
         .post("/user/login")
         .send(user)
         .set('Accept', 'application/json')
@@ -85,7 +85,7 @@ describe("Test login", function(){
         }
         
         if (response != false){
-            const check = (await request("http://localhost:3000")
+            const check = (await request("http://localhost:3001")
             .post("/user/validate_token")
             .send({token: response})
             .expect(number)).text;

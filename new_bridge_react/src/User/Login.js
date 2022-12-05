@@ -30,7 +30,7 @@ class Login extends React.Component{
   async componentDidMount(){
     try {
       const token = localStorage.getItem("token");
-      const decode_name = (await axios.post('http://localhost:3000/user/validate_token', {token})).data;
+      const decode_name = (await axios.post('http://localhost:3001/user/validate_token', {token})).data;
       console.log(decode_name);
       const username = localStorage.getItem("username");
       console.log(username);
@@ -49,7 +49,7 @@ class Login extends React.Component{
   onSubmit = async (e) => {
     e.preventDefault();
     try{
-      const response = await axios.post('http://localhost:3000/user/login', {
+      const response = await axios.post('http://localhost:3001/user/login', {
         username: this.state.username,
         password: this.state.password
       });

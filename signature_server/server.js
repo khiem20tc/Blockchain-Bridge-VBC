@@ -40,7 +40,7 @@ try {
     app.use('/api', api_route);
     app.use('/user', user_route);
 
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
         console.log('Server is started on: ', port);
     });
 } catch(e){

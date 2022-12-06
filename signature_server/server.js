@@ -1,5 +1,5 @@
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const upload = multer();
@@ -17,6 +17,7 @@ require('./model/db');
 // require('./process/auto_admin')
 
 try {
+    console.log(process.env);
     const app = express();
     const port = process.env.PORT || 3000;
 

@@ -1,8 +1,0 @@
-# services:
-#   signature-server:
-#     image: khangluong2004:signature-server
-#     command: sh -c "npm install && npm start"
-#     ports:
-#       - 3001:3001
-#     working_dir: /signature-server
-

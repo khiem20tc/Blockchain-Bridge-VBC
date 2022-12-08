@@ -33,7 +33,7 @@ class Main extends React.Component{
   constructor(props){
     super(props);
     this.base = "https://explorer.vbchain.vn/";
-    this.serverLink = process.env.SERVER_LINK || "http://localhost:3001";
+    this.serverLink = process.env.SERVER_LINK || 'http://20.24.190.187:3001';
     
     this.state = {
       message: '',

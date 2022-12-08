@@ -16,7 +16,7 @@ import black_logo from '../Images/blacklogo.png';
 class Login extends React.Component{
   constructor(props){
     super(props);
-    
+    this.server_link = process.env.SERVER_LINK || 'http://20.24.190.187:3001'
     this.state = {
       username: "",
       password: "",
@@ -30,7 +30,7 @@ class Login extends React.Component{
   onSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post('http://localhost:3001/user/register', {
+        const response = await axios.post(this.server_link + '/user/register', {
         username: this.state.username,
         password: this.state.password,
         });

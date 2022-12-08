@@ -3,10 +3,12 @@ const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 const {WaitAndClick, WaitAndSelect} = require('../utils/index');
 
+let page_link = "http://localhost:3006"
+
 let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id, num_confirm = 1) => {
     // Test name: Lock Native token 1st time
     // Step # | name | target | value
-    await driver.get("http://localhost:3006");
+    await driver.get(page_link);
 
     if (Login){
         await Login(driver);
@@ -72,7 +74,7 @@ let UnlockToken = async(expect, token, address, driver, handle, Login, ConfirmMe
         from_network = "MBC"
     }
     
-    await driver.get("http://localhost:3006");
+    await driver.get(page_link);
 
     if (Login){
         await Login(driver);
@@ -140,7 +142,7 @@ let UnlockToken = async(expect, token, address, driver, handle, Login, ConfirmMe
 let LockToken = async(expect, token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id, num_confirm = 2) => {
     // Test name: Lock ERC20 1st time
     // Step # | name | target | value
-    await driver.get("http://localhost:3006");
+    await driver.get(page_link);
 
     if (Login){
         await Login(driver);
@@ -212,7 +214,7 @@ let UnlockNative = async(expect, address, driver, handle, Login, ConfirmMetamask
     // Test name: Unlock Native token 1st time
     // Step # | name | target | value
     // 1 | open | http://localhost:3006/login | 
-    await driver.get("http://localhost:3006");
+    await driver.get(page_link);
     let from_network = "AGD";
     if (network == "AGD"){
         from_network = "MBC"

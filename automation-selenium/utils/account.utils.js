@@ -1,8 +1,9 @@
 const {By, Key, until} = require('selenium-webdriver');
 
+let page_link = "http://localhost:3006"
 let Login = async(driver) => {
     // 1 | open | http://localhost:3006/login | 
-    await driver.get("http://localhost:3006/login")
+    await driver.get(page_link + "/login")
     // 2 | runScript | window.localStorage.clear() | 
     await driver.executeScript("window.localStorage.clear()")
     // 3 | waitForElementEditable | id=lgUsername | 30000

@@ -23,7 +23,7 @@ try {
 
     //Allow API call from the same local host
     const corsOptions ={
-        origin:'http://localhost:3006', 
+        origin:'http://20.24.190.187:3006', 
         credentials:true,            
         optionSuccessStatus:200
     }

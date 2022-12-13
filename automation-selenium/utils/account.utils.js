@@ -1,6 +1,6 @@
 const {By, Key, until} = require('selenium-webdriver');
 
-let page_link = "http://localhost:3006"
+let page_link = "http://20.24.190.187:3006"
 let Login = async(driver) => {
     // 1 | open | http://localhost:3006/login | 
     await driver.get(page_link + "/login")

@@ -31,9 +31,9 @@ class Login extends React.Component{
     try {
       const token = localStorage.getItem("token");
       const decode_name = (await axios.post(this.server_link + '/user/validate_token', {token})).data;
-      console.log(decode_name);
+      
       const username = localStorage.getItem("username");
-      console.log(username);
+      
       if (username == decode_name){
           this.props.setLog(true)
           this.setState({login: true})

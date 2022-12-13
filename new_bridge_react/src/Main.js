@@ -199,7 +199,6 @@ class Main extends React.Component{
       const result = await method();
       console.log(result);
       const TxId = result.data.transactionHash;
-      console.log(bridge);
       this.setState({
         message: "Successful",
         load: false,
@@ -207,7 +206,7 @@ class Main extends React.Component{
         TxId,
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
-      console.log(this.state.success_link);
+      
       
       if (this.state.currency !== "ERC721 token"){
         let is_native;
@@ -319,7 +318,6 @@ class Main extends React.Component{
       bridge_name: this.state.from_network,
       tokenIds: this.state.token_ids_arr
     })).data
-    console.log(token_uris_arr)
     const receipt = await bridge_contract.methods
                   .unlock_multiples(this.state.sender_address, this.state.token_ids_arr, token_uris_arr, ERC721_UserAddress, signature)
                   .send({from: this.state.receiver_address, gas: '8000000'});
@@ -427,7 +425,6 @@ class Main extends React.Component{
   
       const result = await method(this.state.user, user_contract, bridge_contract, signature);
       console.log(result);
-      console.log(bridge)
       const TxId = result.transactionHash;
       this.setState({
         message: "Successful",
@@ -436,7 +433,7 @@ class Main extends React.Component{
         TxId,
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
-      console.log(this.state.success_link);
+      
       if (this.state.currency !== "ERC721 token"){
         const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
         const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
@@ -492,7 +489,6 @@ class Main extends React.Component{
       bridge_name,
       address
   })).data.toString();
-    console.log(balance);
     return(balance);
   }
       
@@ -509,21 +505,10 @@ class Main extends React.Component{
                 const token_ids_text = this.state.token_id.split(", ");
                 const token_ids_arr = token_ids_text.map((value) => {return parseInt(value)});
                 await this.setState({token_ids_arr});
-                console.log(this.state.token_ids_arr)
               }}
               className ='large_input'/>
           </div>
-          {/* <div className='sep_bottom'>
-            <p> Token URIs </p>
-            <input type="text" placeholder='Token URIs [ ]'
-              value = {this.state.token_uri}
-              onChange = {async (event) => {
-                await this.setState({token_uri: event.target.value});
-                await this.setState({token_uris_arr: this.state.token_uri.split(", ")});
-                console.log(this.state.token_uris_arr)
-              }} 
-              className ='large_input'/>
-          </div> */}
+          
         </div>
       )
     } else {
@@ -537,7 +522,6 @@ class Main extends React.Component{
                 const amount = new BN("0" + event.target.value);
                 const convert = (new BN("10")).pow("18");
                 const converted = (amount.times(convert)).toString();
-                console.log(converted);
                 this.setState({
                   amountDisplay: event.target.value,
                   amount: converted
@@ -555,7 +539,6 @@ class Main extends React.Component{
 
   check = async () => {
     const chain_id = await window.ethereum.request({method: "eth_chainId"});
-    console.log(chain_id);
     if (chain_id == "0x115c"){
       if (this.state.currency == "AGD Native" || this.state.currency == "VMBC"){
         return false
@@ -622,7 +605,7 @@ class Main extends React.Component{
     }
   };
 
-  console.log(window.ethereum);
+  
 
   return (
     <div className='default_font'>
@@ -850,7 +833,7 @@ class Main extends React.Component{
             
             
           </form>
-          <h3> {this.state.message} </h3>
+
         </div>
         
     </div>

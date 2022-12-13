@@ -21,17 +21,17 @@ describe('ERC721', function() {
 
   //NORMAL & ABNORMAL CASES
   //token, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id
-  it('Abnormal: Lock ERC721 1st time for wrong address', async function() {
-    await LockToken("Error!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d9", driver, null, Login, null, null, null, "MBC", "70");
-  })
+  // it('Abnormal: Lock ERC721 1st time for wrong address', async function() {
+  //   await LockToken("Error!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d9", driver, null, Login, null, null, null, "MBC", "70");
+  // })
 
-  it('Abnormal: Lock ERC721 token 1st time for wrong id', async function() {
-    await LockToken("Error!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC", "1234567");
-  })
+  // it('Abnormal: Lock ERC721 token 1st time for wrong id', async function() {
+  //   await LockToken("Error!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC", "1234567");
+  // })
   
-  it('Normal: Lock ERC721 token 1st time', async function() {
-    await LockToken("Success!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC", "70");
-  })
+  // it('Normal: Lock ERC721 token 1st time', async function() {
+  //   await LockToken("Success!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d8", driver, null, Login, null, null, null, "MBC", "70");
+  // })
 
   it('Abnormal: Unlock ERC721 1st time for wrong address', async function() {
     await UnlockToken("Error!", "ERC721", "0xC3DDDE3D73927C503632ff13f9C6D8B20D67c2d9", driver, null, Login, null, null, null, "AGD", "70");

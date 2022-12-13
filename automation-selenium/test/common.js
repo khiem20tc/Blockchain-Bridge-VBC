@@ -3,7 +3,7 @@ const chrome = require('selenium-webdriver/chrome');
 const assert = require('assert');
 const {WaitAndClick, WaitAndSelect} = require('../utils/index');
 
-let page_link = "http://localhost:3006"
+let page_link = "http://20.24.190.187:3006"
 
 let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, ConnectMetamask, SwitchNetwork, network, id, num_confirm = 1) => {
     // Test name: Lock Native token 1st time

@@ -1,0 +1,504 @@
+openapi: 3.0.0
+info:
+  title: "Bridge-signature-server API"
+  description: "API of server of Bridge App. Responsible for authenticating user, verifying Tx, and sign approvals."
+  version: 1.0.0
+
+servers:
+  - url: http://20.24.190.187:3001
+    description: "VBC server"
+
+tags:
+  - name: ERC20
+    description: "All APIs related to ERC20 token"
+  - name: ERC721
+    description: "All APIs related to ERC721 token"
+  - name: User
+    description: "All APIs related to user Accounts"
+  - name: Signature
+    description: "All APIs to produce Approved Signature"
+
+paths:
+  #User
+  /user/login:
+    post:
+      description: "Login user"
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'  
+      responses:
+        '201':
+          description: "Succesful login"
+          content:
+            text/html:
+              schema:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R0ZXN0IiwiaWF0IjoxNjcxMTc2MzIwLCJleHAiOjE2NzExODM1MjB9.xI4oNccQ_peHafLFhSM1UmpmKvBAbl7c80wVdSWydG8"
+        '404':
+          description: "Invalid username or password"
+
+  /user/register:
+    post:
+      description: "Register new user"
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'  
+      responses:
+        '201':
+          description: "Succesful register"
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: "Overlap username"
+  
+  /user/validate_token:
+    post:
+      description: "Validate user token"
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFiY2RlIiwiaWF0IjoxNjY2MjMzMDU0LCJleHAiOjE2NjYyNDAyNTR9.y_I3EoXQbhvTbGIEsZU6X_5YVnz7KMo0Ce6uJml9Cf0"  
+      responses:
+        '201':
+          description: "Valid token"
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '404':
+          description: "Invalid or out-dated token"
+
+  /user/get_address:
+    post:
+      description: "Get address of a username"
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses:
+        '201':
+          description: "Valid username"
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: "Invalid username"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  
+  #ERC20
+  /api/ERC20/receive_native:
+    post:
+      description: "Lock native token"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ERC20Lock"
+              
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/ERC20/lock:
+    post:
+      description: "Lock ERC20 token"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ERC20Lock"
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  
+  /api/ERC20/unlock:
+    post:
+      description: "Unlock ERC20 token"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ERC20Unlock"
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/ERC20/transfer_native:
+    post:
+      description: "Unlock native token"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ERC20Unlock"
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/ERC20/getBalance:
+    post:
+      description: "Get ERC20 TOKEN balance of an address"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                bridge_name:
+                  type: string
+                  description: MBC or AGD
+                
+      responses:
+        '201':
+          description: "Receive balance"
+          content:
+            text/html:
+              schema:
+                type: string
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  
+  /api/ERC20/getRealBalance:
+    post:
+      description: "Get native balance of an address (for no-Metamask user)"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: string
+                bridge_name:
+                  type: string
+                  description: MBC or AGD
+                
+      responses:
+        '201':
+          description: "Receive native balance"
+          content:
+            text/html:
+              schema:
+                type: string
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  
+  /api/ERC20/getApproved:
+    post:
+      description: "Get approved amount of ERC20 token to be unlocked of an address"
+      tags:
+        - ERC20
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  type: string
+                to:
+                  type: string
+                is_native:
+                  type: boolean
+                to_network:
+                  type: string
+                  description: MBC or AGD
+                
+      responses:
+        '201':
+          description: "Receive approved amount"
+          content:
+            text/html:
+              schema:
+                type: string
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  #ERC721
+  /api/ERC721/lock_multi:
+    post:
+      description: "Lock ERC721 tokens"
+      tags:
+        - ERC721
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                bridge_name:
+                  type: string
+                  description: MBC or AGD
+                tokenIds:
+                  type: string
+                to: 
+                  type: string
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+  
+  /api/ERC721/unlock_multi:
+    post:
+      description: "Unlock ERC721 tokens"
+      tags:
+        - ERC721
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                bridge_name:
+                  type: string
+                  description: MBC or AGD
+                tokenIds:
+                  type: string
+                from: 
+                  type: string
+      responses:
+        '201':
+          description: "Receive a succesful transaction receipt"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidReciept"
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /api/ERC721/get_URIs:
+    post:
+      description: "Get URI from ERC721 token Ids"
+      tags:
+        - ERC721
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bridge_name:
+                  type: string
+                  description: MBC or AGD
+                tokenIds:
+                  type: string
+      responses:
+        '201':
+          description: "Return URIs for valid Id"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  #Signature
+  /api/signature:
+    post:
+      description: "Verify transactions and return signature to unlock token"
+      tags:
+        - Signature
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from:
+                  type: string
+                to:
+                  type: string
+                to_network:
+                  type: string
+                  description: MBC or AGD
+                tokenIds:
+                  type: string
+                amount:
+                  type: string
+                is_native:
+                  type: boolean
+                is_NFT:
+                  type: boolean
+      responses:
+        '201':
+          description: "Return signature if valid transactions"
+          content:
+            text/html:
+              schema:
+                type: string
+                
+        '404':
+          description: "Invalid request"
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    ValidReciept:
+      type: object
+      required: 
+        - blockhash
+        - transactionHash
+      properties:
+        blockhash:
+          type: string
+        transactionHash:
+          type: string
+    ERC20Lock:
+      type: object
+      properties:
+        username:
+          type: string
+        bridge_name:
+          type: string
+          description: MBC or AGD
+        amount:
+          type: string
+        to: 
+          type: string
+    ERC20Unlock:
+      type: object
+      properties:
+        username:
+          type: string
+        bridge_name:
+          type: string
+          description: MBC or AGD
+        amount:
+          type: string
+        from: 
+          type: string

@@ -2,7 +2,8 @@ const {By, Key, until} = require('selenium-webdriver');
 
 let WaitAndClick = async(driver, method, locator) => {
     await driver.wait(until.elementLocated(By[method](locator)), 8000);
-    await driver.findElement(By[method](locator)).click();
+    let select_element = await driver.findElement(By[method](locator));
+    await driver.executeScript("arguments[0].click()", select_element);
 }
 
 let WaitAndSelect = async(driver, method_select, locator_select, method_opt, locator_opt) => {

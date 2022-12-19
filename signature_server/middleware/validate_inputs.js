@@ -1,9 +1,15 @@
 //require('dotenv').config();
 const Logger = require('../utils/logger');
 
-const validate_input = (Schema) => async(req, res, next) => {
+const validate_input = (Schema, type="POST") => async(req, res, next) => {
     try {
-        const value = await Schema.validateAsync(req.body);
+        let check
+        if (type == "POST"){
+            check = req.body
+        } else {
+            check = req.query
+        }
+        const value = await Schema.validateAsync(check);
         if (process.env.NODE_ENV != "testing"){
             Logger.info(value);
         }

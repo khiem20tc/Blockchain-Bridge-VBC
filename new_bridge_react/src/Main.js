@@ -33,7 +33,7 @@ class Main extends React.Component{
   constructor(props){
     super(props);
     this.base = "https://explorer.vbchain.vn/";
-    this.serverLink = process.env.SERVER_LINK || 'http://20.24.190.187:3001';
+    this.serverLink = process.env.REACT_APP_SERVER_LINK || 'http://20.24.190.187:3001';
     
     this.state = {
       message: '',
@@ -207,54 +207,6 @@ class Main extends React.Component{
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
       
-      
-      if (this.state.currency !== "ERC721 token"){
-        let is_native;
-        if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
-          if (this.state.purpose == "Draw"){
-            is_native = true;
-          } else {
-            is_native = false;
-          }  
-        } else {
-          if (this.state.purpose == "Draw"){
-            is_native = false;
-          } else {
-            is_native = true;
-          }  
-        }
-        const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
-        const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
-        const from_real_balance = (await axios.post(this.serverLink + "/api/ERC20/getRealBalance", {
-          bridge_name: this.state.from_network,
-          address: this.state.sender_address
-        })).data;
-        const to_real_balance = (await axios.post(this.serverLink + "/api/ERC20/getRealBalance", {
-          bridge_name: this.state.to_network,
-          address: this.state.receiver_address
-        })).data;
-        const approved_num = (await axios.post(this.serverLink + "/api/ERC20/getApproved", {
-          from: this.state.sender_address,
-          to: this.state.receiver_address,
-          is_native,
-          to_network: this.state.to_network
-        })).data;
-        this.setState({
-          from_balance: from_balance_num,
-          to_balance: to_balance_num,
-          from_real_balance,
-          to_real_balance,
-          max_approved: approved_num
-        }); 
-      } else {
-        this.setState({
-          from_balance: "",
-          to_balance: "",
-          max_approved: "",
-          from_real_balance: "",
-          to_real_balance: ""
-        });
-      }
       return true
     }
     catch(e){
@@ -314,10 +266,10 @@ class Main extends React.Component{
 
   //TO
   FE_ERC721_unlockMulti = async(web3, user_contract, bridge_contract, signature) => {
-    const token_uris_arr = (await axios.post(this.serverLink + "/api/ERC721/get_URIs", {
+    const token_uris_arr = (await axios.get(this.serverLink + "/api/ERC721/get_URIs", {params:{
       bridge_name: this.state.from_network,
-      tokenIds: this.state.token_ids_arr
-    })).data
+      tokenIds: this.state.token_ids_arr.join(",")
+    }})).data
     const receipt = await bridge_contract.methods
                   .unlock_multiples(this.state.sender_address, this.state.token_ids_arr, token_uris_arr, ERC721_UserAddress, signature)
                   .send({from: this.state.receiver_address, gas: '8000000'});
@@ -434,39 +386,7 @@ class Main extends React.Component{
         success_link: this.base + bridge.toLowerCase() + '/tx/' + TxId
       });
       
-      if (this.state.currency !== "ERC721 token"){
-        const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
-        const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
-        const from_real_balance = (await axios.post(this.serverLink + "/api/ERC20/getRealBalance", {
-          bridge_name: this.state.from_network,
-          address: this.state.sender_address
-        })).data;
-        const to_real_balance = (await axios.post(this.serverLink + "/api/ERC20/getRealBalance", {
-          bridge_name: this.state.to_network,
-          address: this.state.receiver_address
-        })).data;
-        const approved_num = (await axios.post(this.serverLink + "/api/ERC20/getApproved", {
-          from: this.state.sender_address,
-          to: this.state.receiver_address,
-          is_native: is_native,
-          to_network: this.state.to_network
-        })).data
-        this.setState({
-          from_balance: from_balance_num,
-          to_balance: to_balance_num,
-          max_approved: approved_num,
-          from_real_balance,
-          to_real_balance
-        }); 
-      } else {
-        this.setState({
-          from_balance: "",
-          to_balance: "",
-          max_approved: "",
-          from_real_balance: "",
-          to_real_balance: ""
-        });
-      } 
+      
       return true
     }
     catch(e){
@@ -485,10 +405,10 @@ class Main extends React.Component{
   //Common Function
 
   getBalance = async (address, bridge_name) => {
-    const balance = (await axios.post(this.serverLink + '/api/ERC20/getBalance', {
+    const balance = (await axios.get(this.serverLink + '/api/ERC20/getBalance', {params:{
       bridge_name,
       address
-  })).data.toString();
+  }})).data.toString();
     return(balance);
   }
       
@@ -582,14 +502,67 @@ class Main extends React.Component{
     } else {
       await this.BE_onSubmit()
     }
+    try {
+      console.log("Updating info")
+      if (this.state.currency !== "ERC721 token"){
+        let is_native;
+        if (this.state.currency == "MBC Native" || this.state.currency == "AGD Native"){
+          if (this.state.purpose == "Draw"){
+            is_native = true;
+          } else {
+            is_native = false;
+          }  
+        } else {
+          if (this.state.purpose == "Draw"){
+            is_native = false;
+          } else {
+            is_native = true;
+          }  
+        }
+        const from_balance_num = await this.getBalance(this.state.sender_address, this.state.from_network);
+        const to_balance_num = await this.getBalance(this.state.receiver_address, this.state.to_network);
+        const from_real_balance = (await axios.get(this.serverLink + "/api/ERC20/getRealBalance", {params:{
+          bridge_name: this.state.from_network,
+          address: this.state.sender_address
+        }})).data;
+        const to_real_balance = (await axios.get(this.serverLink + "/api/ERC20/getRealBalance", {params: {
+          bridge_name: this.state.to_network,
+          address: this.state.receiver_address
+        }})).data;
+        const approved_num = (await axios.get(this.serverLink + "/api/ERC20/getApproved", {params: {
+          from: this.state.sender_address,
+          to: this.state.receiver_address,
+          is_native,
+          to_network: this.state.to_network
+        }})).data;
+        this.setState({
+          from_balance: from_balance_num,
+          to_balance: to_balance_num,
+          from_real_balance,
+          to_real_balance,
+          max_approved: approved_num
+        }); 
+      } else {
+        this.setState({
+          from_balance: "",
+          to_balance: "",
+          max_approved: "",
+          from_real_balance: "",
+          to_real_balance: ""
+        });
+      }
+    } catch(e){
+      console.log(e)
+    }
   }
 
   getCurrentAddress = async() => {
     let address;
     if (this.state.user == null){
-      address = (await axios.post(this.serverLink + "/user/get_address", {
+      address = (await axios.get(this.serverLink + "/user/get_address", {
+        params: {
         username: localStorage.getItem("username")
-      })).data;
+      }})).data;
       return(address);
     } else {
       const Acc = (await this.state.user.eth.getAccounts());
@@ -659,10 +632,17 @@ class Main extends React.Component{
                     }}>
                       <div className='inputBox'>
                         <div className='sep_bottom'>
-                          <p> Current address: {this.state.current_add}</p>
+                          <p> Current address:</p>
+                          <div className='sep_bottom'>
+                            <input id="currentAddress" type="text" placeholder='Current Address'
+                              value = {this.state.current_add}
+                              onChange = {() => {}}
+                            className ='add_large_input'/>
+                          </div>
                           <p> Transfer: </p>
                           <div className='large_div newArrow'>
                             <select 
+                              id="currency"
                               value={this.state.currency}
                               onChange={(event) => {
                                 this.setState({currency: event.target.value});

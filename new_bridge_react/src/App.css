@@ -42,7 +42,7 @@
   }
 
   #RedLogo{
-    width: 40%;
+    width: 35%;
   }
 
   .bar_width{
@@ -94,6 +94,17 @@
 }
 
 .large_input{
+  width: 100%;
+  height: 46px;
+  font-weight: 600px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 78px;
+  border: none;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.add_large_input{
   width: 100%;
   height: 46px;
   font-weight: 600px;

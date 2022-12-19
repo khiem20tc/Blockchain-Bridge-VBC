@@ -25,7 +25,7 @@ let LockNative = async(expect, address, driver, handle, Login, ConfirmMetamask, 
     await driver.wait(until.elementLocated(By.id("receiverAddress")), 20000)
     
     // 12 | click | id=amountEther | 
-    await driver.findElement(By.id("amountEther")).click()
+    await WaitAndClick(driver, "id", "amountEther");
     // 13 | type | id=amountEther | 0.00001
     await driver.findElement(By.id("amountEther")).sendKeys(id)
     // 14 | click | css=.col-lg-5:nth-child(1) .small_input_transparent | 
@@ -90,13 +90,13 @@ let UnlockToken = async(expect, token, address, driver, handle, Login, ConfirmMe
     
     // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
     if (token == "ERC20"){
-        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'VMBC']");
+        await WaitAndSelect(driver, "id", "currency", "xpath", "//option[@value = 'VMBC']");
         // 14 | click | id=amountEther | 
         await driver.findElement(By.id("amountEther")).click()
         // 15 | type | id=amountEther | 0.00001
         await driver.findElement(By.id("amountEther")).sendKeys(id)
     } else {
-        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
+        await WaitAndSelect(driver, "id", "currency", "xpath", "//option[@value = 'ERC721 token']");
         // 14 | click | id=amountEther | 
         await WaitAndClick(driver, "id", "tokenId");
         // 15 | type | id=amountEther | 0.00001
@@ -161,7 +161,7 @@ let LockToken = async(expect, token, address, driver, handle, Login, ConfirmMeta
     await WaitAndSelect(driver, 'css', ".large_div:nth-child(2) > .large_input_transparent", "xpath", "//option[@value = 'Deposit']");
     if(token == "ERC20"){
         // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'VMBC']");
+        await WaitAndSelect(driver, "id", "currency", "xpath", "//option[@value = 'VMBC']");
         
         // 12 | click | id=amountEther | 
         await driver.findElement(By.id("amountEther")).click()
@@ -169,7 +169,7 @@ let LockToken = async(expect, token, address, driver, handle, Login, ConfirmMeta
         await driver.findElement(By.id("amountEther")).sendKeys(id);
     } else {
         // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-        await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'ERC721 token']");
+        await WaitAndSelect(driver, "id", "currency", "xpath", "//option[@value = 'ERC721 token']");
         // 12 | click | 
         await driver.findElement(By.id("tokenId")).click()
         // 13 | type | 
@@ -233,7 +233,7 @@ let UnlockNative = async(expect, address, driver, handle, Login, ConfirmMetamask
     }
     
     // 10 | click | css=.large_div:nth-child(3) > .large_input_transparent | 
-    await WaitAndSelect(driver, "css", ".large_div:nth-child(3) > .large_input_transparent", "xpath", "//option[@value = 'MBC']");
+    await WaitAndSelect(driver, "id", "currency", "xpath", "//option[@value = 'MBC']");
     // 12 | click | css=.large_div:nth-child(2) > .large_input_transparent | 
     await WaitAndSelect(driver, "css", ".large_div:nth-child(2) > .large_input_transparent", "xpath", "//option[@value = 'Draw']");
 

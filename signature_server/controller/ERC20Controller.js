@@ -27,17 +27,28 @@ const transferNativeController = template(async(req) => {
 })
 
 const getBalanceController = template(async(req) => {
-    return (await getBalance(req.body));
+    return (await getBalance({
+        address: req.query.address,
+        bridge_name: req.query.bridge_name
+    }));
     
 })
 
 const getRealBalanceController = template(async(req) => {
-    return (await getRealBalance(req.body));
+    return (await getRealBalance({
+        address: req.query.address,
+        bridge_name: req.query.bridge_name
+    }));
     
 })
 
 const getApprovedController = template(async(req) => {
-    const approved = (await getApproved(req.body)).toString();
+    const approved = (await getApproved({
+        from: req.query.from,
+        to: req.query.to,
+        is_native: (req.query.is_native == "true"),
+        to_network: req.query.to_network
+    })).toString();
     const approved_eth = await mbc_bridge.utils.fromWei(approved, 'ether');
     return(approved_eth);
 })

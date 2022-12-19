@@ -10,7 +10,10 @@ const unlockMultiController = template(async(req) => {
 })
 
 const getTokenURIsController = template(async(req) => {
-    return(await getTokenURIS(req.body));
+    return(await getTokenURIS({
+        bridge_name: req.query.bridge_name,
+        tokenIds: req.query.tokenIds.split(',')
+    }));
 })
 
 

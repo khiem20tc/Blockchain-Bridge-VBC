@@ -385,7 +385,7 @@ paths:
                 type: boolean
 
   /api/ERC721/get_URIs:
-    post:
+    get:
       description: "Get URI from ERC721 token Ids"
       tags:
         - ERC721

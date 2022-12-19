@@ -17,7 +17,7 @@ const validateTokenController = template(async(req) => {
 })
 
 const getAddressController = template(async(req) => {
-    const address = get_address(req.body);
+    const address = get_address({username: req.query.username});
     return address
 })
 

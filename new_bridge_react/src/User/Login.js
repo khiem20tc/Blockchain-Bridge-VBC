@@ -18,7 +18,7 @@ import black_logo from '../Images/blacklogo.png';
 class Login extends React.Component{
   constructor(props){
     super(props);
-    this.server_link = process.env.SERVER_LINK || 'http://20.24.190.187:3001'
+    this.server_link = process.env.REACT_APP_SERVER_LINK || 'http://20.24.190.187:3001'
     this.state = {
       username: "",
       password: "",

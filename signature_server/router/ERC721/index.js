@@ -5,6 +5,6 @@ const {lockMultiController, unlockMultiController, getTokenURIsController} = req
 const ERC721_route = Router();
 ERC721_route.post('/lock_multi', validate_lock_multi, lockMultiController);
 ERC721_route.post('/unlock_multi', validate_unlock_multi, unlockMultiController);
-ERC721_route.post('/get_URIs', getTokenURIsController);
+ERC721_route.get('/get_URIs', getTokenURIsController);
 
 module.exports = ERC721_route;

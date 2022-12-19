@@ -4,7 +4,7 @@ const validate_input = require('./validate_inputs');
 
 const validate_lock_receive = validate_input(joi_schema_lock_receive);
 const validate_unlock_transfer = validate_input(joi_schema_unlock_transfer);
-const validate_get_balance = validate_input(joi_schema_get_balance);
+const validate_get_balance = validate_input(joi_schema_get_balance, "GET");
 
 module.exports = {
     validate_lock_receive,

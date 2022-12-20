@@ -40,6 +40,11 @@ paths:
                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R0ZXN0IiwiaWF0IjoxNjcxMTc2MzIwLCJleHAiOjE2NzExODM1MjB9.xI4oNccQ_peHafLFhSM1UmpmKvBAbl7c80wVdSWydG8"
         '404':
           description: "Invalid username or password"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: false
 
   /user/register:
     post:
@@ -60,6 +65,11 @@ paths:
                 type: boolean
         '404':
           description: "Overlap username"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: false
   
   /user/validate_token:
     post:
@@ -84,20 +94,22 @@ paths:
                 type: boolean
         '404':
           description: "Invalid or out-dated token"
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: false
 
   /user/get_address:
-    post:
+    get:
       description: "Get address of a username"
       tags:
         - User
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
       responses:
         '201':
           description: "Valid username"
@@ -111,6 +123,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
   
   #ERC20
@@ -138,6 +151,8 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
+
 
   /api/ERC20/lock:
     post:
@@ -163,6 +178,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
   
   /api/ERC20/unlock:
     post:
@@ -188,6 +204,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
   /api/ERC20/transfer_native:
     post:
@@ -213,24 +230,23 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
   /api/ERC20/getBalance:
-    post:
+    get:
       description: "Get ERC20 TOKEN balance of an address"
       tags:
         - ERC20
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                address:
-                  type: string
-                bridge_name:
-                  type: string
-                  description: MBC or AGD
-                
+      parameters:
+        - in: query
+          name: address
+          schema:
+            type: string
+        - in: query
+          name: bridge_name
+          schema:
+            type: string
+      
       responses:
         '201':
           description: "Receive balance"
@@ -245,24 +261,23 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
   
   /api/ERC20/getRealBalance:
-    post:
+    get:
       description: "Get native balance of an address (for no-Metamask user)"
       tags:
         - ERC20
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                address:
-                  type: string
-                bridge_name:
-                  type: string
-                  description: MBC or AGD
-                
+      parameters:
+        - in: query
+          name: address
+          schema:
+            type: string
+        - in: query
+          name: bridge_name
+          schema:
+            type: string
+      
       responses:
         '201':
           description: "Receive native balance"
@@ -277,28 +292,30 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
   
   /api/ERC20/getApproved:
-    post:
+    get:
       description: "Get approved amount of ERC20 token to be unlocked of an address"
       tags:
         - ERC20
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                from:
-                  type: string
-                to:
-                  type: string
-                is_native:
-                  type: boolean
-                to_network:
-                  type: string
-                  description: MBC or AGD
-                
+      parameters:
+        - in: query
+          name: from
+          schema: 
+            type: string
+        - in: query
+          name: to
+          schema: 
+            type: string
+        - in: query
+          name: is_native
+          schema: 
+            type: string
+        - in: query
+          name: to_network
+          schema: 
+            type: string
       responses:
         '201':
           description: "Receive approved amount"
@@ -313,6 +330,8 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
+
   #ERC721
   /api/ERC721/lock_multi:
     post:
@@ -348,6 +367,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
   
   /api/ERC721/unlock_multi:
     post:
@@ -383,23 +403,22 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
   /api/ERC721/get_URIs:
     get:
       description: "Get URI from ERC721 token Ids"
       tags:
         - ERC721
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                bridge_name:
-                  type: string
-                  description: MBC or AGD
-                tokenIds:
-                  type: string
+      parameters:
+        - in: query
+          name: bridge_name
+          schema: 
+            type: string
+        - in: query
+          name: tokenIds
+          schema: 
+            type: string
       responses:
         '201':
           description: "Return URIs for valid Id"
@@ -416,6 +435,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
   #Signature
   /api/signature:
@@ -458,6 +478,7 @@ paths:
             application/json:
               schema:
                 type: boolean
+                example: false
 
 components:
   schemas:
